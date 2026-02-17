@@ -52,8 +52,58 @@ class Solution {
         }
         return -1;
     }
+
+    //Method-2 using dist matrix + BFS
+    typedef pair<int,int>p;
+    vector<p>direction={{-1,0},{0,-1},{0,1},{1,0}};
     
-    //Method-1 :- Using Dijkstra  ; TC- O(N*M* log(N*M)); SC- O(N*M)
+    int Bfs2(vector<vector<int>>grid, pair<int,int>source, pair<int,int>destination){
+       
+        int N=grid.size();
+        int M=grid[0].size();
+        
+        int srcX=source.first, srcY=source.second;
+        int tarX=destination.first, tarY=destination.second;
+        if(grid[srcX][srcY] == 0 || grid[tarX][tarY] == 0) return -1;
+        
+        vector<vector<int>>dist(N,vector<int>(M,INT_MAX));
+        
+        queue<p>q;
+        q.push({srcX,srcY});
+        grid[srcX][srcY]=-1;
+        dist[srcX][srcY]=0;
+        
+        while(!q.empty()){
+            
+                p curr=q.front();
+                q.pop();
+                
+                int x=curr.first;
+                int y=curr.second;
+                
+                if(x==tarX && y== tarY) return dist[tarX][tarY];
+                
+                for(auto &dirs:direction){
+                    
+                    int nx= x + dirs.first;
+                    int ny= y + dirs.second;
+                    
+                    if(nx>=0 && nx <N && ny>=0 && ny<M && grid[nx][ny]==1){
+                       
+                       if(dist[nx][ny]> 1+dist[x][y]){
+                            grid[nx][ny]=-1;
+                            q.push({nx,ny});
+                            dist[nx][ny]=1+dist[x][y];
+                       }
+                       
+                    }
+                    
+                }
+        }
+        return -1;
+    } 
+    
+    //Method-3 :- Using Dijkstra  ; TC- O(N*M* log(N*M)); SC- O(N*M)
     typedef pair<int,int>p;
     typedef pair<int,p>pp;
     vector<p>direction={{-1,0},{0,-1},{0,1},{1,0}};
@@ -114,4 +164,5 @@ class Solution {
 //Uniform weight → Use BFS
 // Variable weight → Use Dijkstra
 // 0 or 1 weight → Use 0-1 BFS
+
 // Negative weight → Bellman-Ford
