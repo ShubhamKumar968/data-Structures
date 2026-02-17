@@ -27,8 +27,12 @@ void floydWarshall(int V, vector<vector<int>>&edges){
                 for(int j = 0; j < V; j++){
                     
                     if(dist[i][via] != INT_MAX && dist[via][j] != INT_MAX){
-                        dist[i][j] = min(dist[i][j],
-                                         dist[i][via] + dist[via][j]);
+                        
+                        if( dist[i][j] >dist[i][via] + dist[via][j] ){
+                            
+                                dist[i][j] = dist[i][via] + dist[via][j];
+                                par[i][j]= par[i][via];
+                        }                   
                     }
                 }
             }
@@ -58,4 +62,5 @@ vector<int> getPath(int src, int dest,vector<vector<int>>& par){
         
         path.push_back(dest);
         return path;
+
 }
