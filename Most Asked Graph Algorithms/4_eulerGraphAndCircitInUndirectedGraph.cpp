@@ -2,6 +2,11 @@
 using namespace std;
 #include<bits/stdc++.h>
 
+//For Euler Path/Circuit condition is:
+
+//1.All vertices with non-zero degree must be connected.
+//2.Degree condition must hold.
+
 class Solution {
   public:
      
@@ -28,14 +33,14 @@ class Solution {
             
             if(adj[i].size()!=0){// yaha 'i' nonZerodeg wala node hai;
                 nonZeroDegVertex=i;
-                //undirected graph me kisi bhi node ka degree = uss node me kitne neighbor hai{deg[i]==adj[i].size();                nonZeroDegVertex=i;
+                //undirected graph me kisi bhi node ka degree = uss node me kitne neighbor hai{deg[i]==adj[i].size(); 
                 break;
             }
         }
         
         if(nonZeroDegVertex==-1){//matlab sabka deg zero hai yani koi edge nhi hai
-            return true;// agar koi edge hi nhi hai to wo euler graph to hoga hi
-        }
+            return true;// agar koi edge hi nhi hai   "If graph contains no edges, it trivially satisfies Euler conditions."
+          
         //Step-2: Start dfs from nonZeroDeg Vertex
         vector<bool>vis(V,false);
         dfs(nonZeroDegVertex, adj, vis);
@@ -84,3 +89,4 @@ class Solution {
         return 0;
     }
 };
+
