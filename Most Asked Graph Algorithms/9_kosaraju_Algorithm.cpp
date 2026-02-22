@@ -2,7 +2,6 @@
 using namespace std;
 #include<bits/stdc++.h>
 
-
 class Solution {
   public:
   
@@ -17,12 +16,14 @@ class Solution {
 //5.Time complexity: O(V + E)
 //6.Space complexity: O(V+E)
 
-    void dfs(int node,vector<vector<int>>&adjRev,vector<bool>&visited){
+    void dfs(int node,vector<vector<int>>&adjRev,vector<bool>&visited,vector<int>& component){
         
         visited[node]=true;
+        component.push_back(node);
+      
         for(auto &nbr:adjRev[node]){
             if(!visited[nbr]){
-                dfs(nbr,adjRev,visited);
+                dfs(nbr,adjRev,visited,component);
             }
         }
     }
@@ -39,7 +40,6 @@ class Solution {
     }
     //Always Applicable in a directed graph
     int kosaraju(vector<vector<int>> &adj) {
-        // code here
         
         //Step-1: find topological order by apply dfs on the graph
         int V=adj.size();
@@ -61,7 +61,8 @@ class Solution {
             }
         }
         
-        //Step-3: Apply dfs on topological order on the reversed Graph
+        //Step-3: Apply dfs on topological (stack) order on the reversed Graph to find SCC
+        vector<vector<int>>allSCC;
         int stronglyComponent=0;
         vector<bool>visited(V,false);
         
@@ -70,11 +71,15 @@ class Solution {
             st.pop();
             
             if(!visited[node]){
-                dfs(node,adjRev,visited);
+                vector<int>component;
+                dfs(node,adjRev,visited,component);
+                allSCC.push_back(component);
                 stronglyComponent++;
             }
         }
         
         return stronglyComponent;
+        //return allSCC;
     }
+
 };
