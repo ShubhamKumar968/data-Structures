@@ -3,6 +3,11 @@ using namespace std;
 #include<bits/stdc++.h>
 
 //TC=O(n); SC=O(1)
+//    2 Pointer Approach:-
+
+// 'j' marks where next non-zero should go.
+//Each time you find a non-zero, you swap it into position j.
+//Then increment j.
 
 class Solution {
   public:
@@ -21,4 +26,5 @@ class Solution {
         }
         return;
     }
+
 };
