@@ -33,4 +33,47 @@ class Solution {
         }
         return total;
     }
+
 };
+ //Method-2 using 2 pointer O(1) space
+int maxWater(vector<int> &arr) {
+        // code here
+       
+        int n = arr.size();
+        
+        int left = 0; 
+        int right = n - 1; 
+        
+        int leftMax = 0;           // max height from left
+        int rightMax = 0;          // max height from right
+        
+        int total = 0;             // total trapped water
+        
+        while(left <= right){
+            
+            if(arr[left] < arr[right]){
+                
+                if(arr[left] >= leftMax){
+                    leftMax = arr[left];   // update left max
+                }
+                else{
+                    total += leftMax - arr[left];   // trap water
+                }
+                
+                left++;   // move left pointer
+            }
+            else{
+                
+                if(arr[right] >= rightMax){
+                    rightMax = arr[right];   // update right max
+                }
+                else{
+                    total += rightMax - arr[right];  // trap water
+                }
+                
+                right--;   // move right pointer
+            }
+        }
+        
+        return total;
+    }
