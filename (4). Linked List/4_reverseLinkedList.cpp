@@ -59,3 +59,26 @@ class Solution {
         
     }
 };
+
+//Reverse a Doubly linked list(DLL):-
+Node *reverse(Node *head) {
+        // code here
+        if(!head || !head->next) return head;
+
+        Node* curr = head;
+        
+        Node* temp = NULL;
+        while(curr){
+            // Swap next and prev
+            temp = curr->prev;
+            curr->prev = curr->next;
+            curr->next = temp;
+    
+            // Move to next node (which is prev now)
+            curr = curr->prev;
+        }
+        // Fix head
+        if(temp) head = temp->prev;
+    
+        return head;
+    }
