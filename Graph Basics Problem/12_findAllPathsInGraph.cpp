@@ -75,3 +75,42 @@ public:
             return false;
     }
 };
+
+//(3).Find all possible paths from top to bottom
+//Given a n x m matrix mat[][]. Your task is to find and return all possible paths from the top-left cell (0, 0) to the bottom-right cell (n-1, m-1).
+
+class Solution {
+  public:
+  
+    void solve(vector<vector<int>> &mat,int n, int m, int i, int j,
+    vector<int>&path,  vector<vector<int>>&res){
+        
+        
+        // 1. Boundary Check
+        if (i<0||i >= n ||j<0|| j >= m) return;
+    
+        // 2. Add current element to path
+        path.push_back(mat[i][j]);
+    
+        // 3. Destination Check
+        if (i == n - 1 && j == m - 1) {
+            res.push_back(path);
+        } else {
+            // 4. Move Right and Down
+            solve(mat, n, m, i + 1, j, path, res);//down
+            solve(mat, n, m, i, j + 1, path, res);//right
+            
+        }
+    
+        // 5. Backtrack: Remove current element before returning
+        path.pop_back();
+    }
+    
+    vector<vector<int>> findAllPossiblePaths(int n, int m, vector<vector<int>> &mat) {
+        // code here
+        vector<vector<int>>res;
+        vector<int>path;
+        solve(mat,n,m,0,0,path,res);
+        return res;
+    }
+};
