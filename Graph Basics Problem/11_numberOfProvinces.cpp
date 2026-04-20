@@ -4,15 +4,19 @@ using namespace std;
 
 class Solution {
   public:
-    void dfs(int node, int V,vector<vector<int>>&adj,vector<bool>&vis){
-        
-        vis[node]=true;
-        // traverse all possible neighbors
-        for (int j = 0; j < V; j++) {//Adjacency matrix
-            if (adj[node][j] == 1 && !vis[j]) {
-                dfs(j,V, adj, vis);
+    
+    void dfs(vector<vector<int>> adj,vector<bool>&vis,int u,int V){
+      
+        vis[u]=true;
+      // traverse all possible neighbors
+        for(int v=0; v< V; v++){//Adjacency matrix
+            if(adj[u][v]==1){
+                if(!vis[v]){
+                    dfs(adj,vis,v,V);
+                }
             }
         }
+      
     }
     int numProvinces(vector<vector<int>> adj, int V) {
         // code here
@@ -22,7 +26,7 @@ class Solution {
         
         for(int i=0;i<V;i++){
             if(!vis[i]){
-                dfs(i,V,adj,vis);
+                 dfs(adj,vis,i,V);
                 components++;
             }
         }
