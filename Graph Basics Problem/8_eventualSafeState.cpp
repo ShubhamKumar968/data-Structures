@@ -104,3 +104,68 @@ public:
     }
 };
 
+//Method-03:
+
+class Solution {
+  public:
+    
+    bool dfs(vector<vector<int>>& adj, int src, vector<bool>& vis,
+         vector<bool>& currPath, unordered_set<int>& st) {
+    
+        // If we already know this node is safe, return true
+        if (st.count(src)) return true;
+        
+        // If we hit a node already visited but NOT in st, it's unsafe
+        if (vis[src]) return false;
+    
+        vis[src] = true;
+        currPath[src] = true;
+    
+        for (auto &nbr : adj[src]) {
+            // 1. Check for cycle in current path
+            if (vis[nbr] && currPath[nbr]) return false;
+    
+            // 2. Recursive check: if any neighbor is unsafe, src is unsafe
+            if (!dfs(adj, nbr, vis, currPath, st)) return false;
+        }
+    
+        // Backtrack current path
+        currPath[src] = false;
+        
+        // If we reached here, the node is safe! Add to st (Memoization)
+        st.insert(src);
+        return true;
+    }
+
+    vector<int> safeNodes(int V, vector<vector<int>>& edges) {
+        
+        vector<vector<int>> adj(V);
+        vector<int> outdeg(V, 0);
+        for (auto &e : edges) {
+            adj[e[0]].push_back(e[1]);
+            outdeg[e[0]]++;
+        }
+    
+        unordered_set<int> st;
+        // Initial terminal nodes are safe
+        for (int i = 0; i < V; i++) {
+            if (outdeg[i] == 0) st.insert(i);
+        }
+    
+        vector<bool> vis(V, false);
+        vector<bool> currPath(V, false);
+        vector<int> res;
+    
+        // We must iterate from 0 to V-1 to ensure result is sorted if required
+        for (int i = 0; i < V; i++) {
+            if (dfs(adj, i, vis, currPath, st)) {
+                res.push_back(i);
+            }
+        }
+        
+        // Some platforms require sorted output for this problem
+        sort(res.begin(), res.end());
+        return res;
+    }
+};
+
