@@ -109,3 +109,46 @@ class Solution {
         return optimal(arr);
     }
 };
+
+//(2) Printing the longest increasing subsequence
+class Solution {
+  public:
+  
+    vector<int> bottomUp(vector<int>& arr){
+        int n=arr.size();
+        vector<int>dp(n,1);//every single element is the lis.
+        vector<int> parent(n, -1);//to store the previos index where we included the element in the Lis
+       
+        int Lis = 1, LisIdx = 0;
+        
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (arr[i] > arr[j] && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                    parent[i] = j;
+                }
+            }
+            if (dp[i] > Lis) {
+                Lis = dp[i];
+                LisIdx = i;//it will store end index of lis
+            }
+        }
+        
+        // Reconstruction using parent array
+        vector<int> lis;
+        while (LisIdx != -1) {
+            lis.push_back(arr[LisIdx]);
+            LisIdx = parent[LisIdx];
+        }
+        
+        reverse(lis.begin(), lis.end());
+        
+        return lis;
+    }
+    
+    vector<int> getLIS(vector<int>& arr) {
+        // Code here
+        //int res= solve(arr,0,-1);
+        return bottomUp(arr);
+    }
+};
