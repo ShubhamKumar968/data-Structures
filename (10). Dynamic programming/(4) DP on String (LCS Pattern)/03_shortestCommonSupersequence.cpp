@@ -47,7 +47,35 @@ class Solution {
                         
                 }
             }
-            
+
+        //Printing Shortest common SUpersequencee
+        string res="";
+        int i=n,j=m;
+        while(i>0 && j>0){
+            if(s1[i-1]==s2[j-1]){
+                res+=s1[i-1];
+                i--,j--;
+            }else{
+                if(dp[i][j-1] <= dp[i-1][j]){
+                    res+=s2[j-1];
+                    j--;
+                }else{
+                    res+=s1[i-1];
+                    i--;
+                }
+            }
+        }
+        while (i > 0) {
+            res.push_back(s1[i-1]);
+            i--;
+        }
+        while (j > 0) {
+            res.push_back(s2[j-1]);
+            j--;
+        }
+        reverse(res.begin(), res.end());
+        cout<<res<<" ";
+      
         return dp[n][m];
     }
 
