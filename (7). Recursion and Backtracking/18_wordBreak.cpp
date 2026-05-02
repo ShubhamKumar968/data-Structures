@@ -4,82 +4,40 @@ using namespace std;
 
 //(1).Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a 
 //space-separated sequence of one or more dictionary words.
-class Solution {
-public:
-    //TC= O(n^3)
-     // Recursive function to check if s[i..n-1] can be segmented into dictionary words
-    bool solve(string &s, unordered_set<string> &st, int i, int n, vector<int> &dp) {
-        
-        // Base case: reached the end of the string → valid segmentation
-        if (i == s.size())
-            return true;
-        
-        // If already computed, return the stored result
-        if (dp[i] != -1)
-            return dp[i];
-        
-        // Try all possible substrings starting at index i
-        for (int j = i; j < n; j++) {
-            string temp = s.substr(i, j - i + 1); // substring from index i to j
-            
-            // If substring exists in the dictionary
-            if (st.count(temp)) {
-                // Recurse on the remaining string starting at index j+1
-                if (solve(s, st, j + 1, n, dp))
-                    return dp[i] = true; // store result and return
-            }
-        }
-        
-        // No valid split found starting at index i
-        return dp[i] = false;
-    }
-    
-    bool wordBreak(string s, vector<string>& dictionary) {
-        vector<int> dp(s.size(),-1);
-        unordered_set<string>st(dictionary.begin(), dictionary.end());
-        int n=s.length();
-        
-        return solve(s, st, 0, n, dp);
-    }
-};
-
-//(1) Optimal approach
-class Solution {
+class Solution {//O(n*n)
   public:
-     
-    //TC= O(n * L)
-    vector<int> dp; // memoization array
-    // Recursive function to check if s[i..n-1] can be segmented
-    bool solve(string &s, unordered_set<string> &st, int i, int n, unordered_set<int> &wordLens){
-        if (i == n) return true; // reached end → valid split
-        if (dp[i] != -1) return dp[i]; // return memoized result
+    int memo[3001];
+    bool solve(string &s,unordered_set<string>&st,int idx,int n){
         
-        // Try only lengths that exist in the dictionary
-        for (int len : wordLens) {
-            if (i + len <= n) {
-                // Check substring without creating a new string
-                if (st.count(s.substr(i, len))) { // compare is faster in C++17+
-                    if (solve(s, st, i + len, n, wordLens))
-                        return dp[i] = true;
+        if(idx==n){
+            return true;
+        }
+        // Memoization check: If we already know if s[idx...n] can be broken
+        if (memo[idx] != -1) return memo[idx];
+        
+        string temp="";
+        
+        for(int i=idx;i<n;i++){
+            temp+=s[i];// Building the prefix: s[idx...i]
+            
+            
+            // If the current prefix is in the dictionary
+            if(st.count(temp)){
+                // Check if the REMAINING part (starting from i+1) can be broken
+                if(solve(s,st,i+1,n)==true){
+                    return memo[idx]=true;
                 }
+                
             }
         }
-        
-        return dp[i] = false;
+        return memo[idx]=false;
     }
-    
     bool wordBreak(string &s, vector<string> &dictionary) {
-        
-        int n = s.size();
-        dp.assign(n + 1, -1); // initialize memo array
-        
-        unordered_set<string> st(dictionary.begin(), dictionary.end()); // dictionary lookup
-        
-        // Precompute unique word lengths to reduce iterations
-        unordered_set<int> wordLens;
-        for (auto &w : dictionary) wordLens.insert(w.size());
-        
-        return solve(s, st, 0, n, wordLens);
+        // code here
+        unordered_set<string>st(dictionary.begin(),dictionary.end());
+        int n=s.length();
+        memset(memo,-1,sizeof(memo));
+        return solve(s,st,0,n);
     }
 };
 
