@@ -4,34 +4,46 @@ using namespace std;
 
 class Solution {
 public:
-vector<vector<string>>res;
-    bool isPalindrome(string& s, int i, int j){
-        while(i<j){
-            if(s[i]!=s[j]) return false;
-            i++,j--;
+    //TC=O(n*2^n)
+    bool isPalindrome(string s, int i, int j){
+        
+        if(i>=j) return true;
+        
+        if(s[i] !=s[j]){
+            return false;
         }
-        return true;
+        
+        return isPalindrome(s,i+1,j-1);
     }
 
-    void solve(string s,int idx,int n,vector<string>&curr){
+    void solve(string &s,int n,int idx,vector<vector<string>>&res,vector<string>&curr){
+
         if(idx==n){
             res.push_back(curr);
             return;
         }
+        
+        string temp="";
         for(int i=idx;i<n;i++){
+            temp+=s[i];// Building the substring
+
             if(isPalindrome(s,idx,i)){
-                curr.push_back(s.substr(idx,i-idx+1));
-                solve(s,i+1,n,curr);
+                //Take current substring
+                curr.push_back(temp);
+                //Explore just next substring
+                solve(s,n,i+1,res,curr);
+                // Backtrack
                 curr.pop_back();
             }
         }
+        return;
     }
 
     vector<vector<string>> partition(string s) {
+        vector<vector<string>>res;
         vector<string>curr;
         int n=s.length();
-        solve(s,0,n,curr);
+        solve(s,n,0,res,curr);
         return res;
     }
-    
 };
