@@ -104,6 +104,32 @@ public:
 
 //(3) return all possible combinations of k numbers chosen from the range [1, n].
 
+//Method-01: Standard Method
+class Solution {
+public:
+    
+    void solve(int start, int n,int k,vector<int>&temp, vector<vector<int>>&res){
+        if(k==0){
+            res.push_back(temp);
+            return;
+        }
+        if(start>n) return;
+        //take
+        temp.push_back(start);
+        solve(start+1,n,k-1,temp,res);
+
+        //skip
+        temp.pop_back();
+        solve(start+1,n,k,temp,res);
+    }
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>>res;
+        vector<int>temp;
+        solve(1,n,k,temp,res);
+        return res;
+    }
+};
+//Method-02: Using for loop
 //Time complexity:O(k(nCk))
 class Solution {
 public:
