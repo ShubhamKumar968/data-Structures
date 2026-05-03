@@ -7,18 +7,26 @@ class Solution {
 public:
     
 //Method-1 : (always start i from idx , not before idx otherwise permutation will repeat)
-     void solve(vector<int>& nums, int n, int idx){
-         
-        if(idx>=n){
-            res.push_back(nums);
+     void solve(string& s, int n, int idx, vector<string>& res) {
+    
+        // Base Case: If the current index reaches the end, a full permutation is formed
+        if (idx == n) {
+            res.push_back(s);
             return;
         }
-
-        for(int i=idx;i<n;i++){
-
-            swap(nums[i],nums[idx]); //Do
-            solve(nums,n,idx+1);//Explore
-            swap(nums[i],nums[idx]);//Undo
+        
+        // Iterate through all characters from 'idx' to the end
+        for (int i = idx; i < n; i++) {
+            
+            // 1. Swap: Fix the character at position 'i' into the 'idx' position
+            swap(s[i], s[idx]);
+            
+            // 2. Recurse: Move to the next index to fix the remaining characters
+            solve(s, n, idx + 1, res);
+            
+            // 3. Backtrack: Swap back to restore the original string for the next iteration
+            // This is crucial to explore other possibilities from the previous state
+            swap(s[i], s[idx]);
         }
     }
 
