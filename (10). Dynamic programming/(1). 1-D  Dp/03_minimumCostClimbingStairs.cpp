@@ -20,7 +20,23 @@ class Solution {
         
         return t[idx]=min(one,two);
     }
-    
+
+    //Method-02: Using Backward Recursion
+     int solve(vector<int>& cost, int n){
+       //If we are at step 0 or step 1, the cost to stay there is just the cost of that step
+        if(n==0 || n==1){
+            return cost[n];
+        }
+        if(n<0) return 0;
+        
+        if(t[n]!=-1) return t[n];
+        
+        int one=cost[n]+solve(cost,n-1);
+        int two=cost[n]+solve(cost,n-2);
+        
+         return t[n]=min(one, two);
+    }
+
     //Method-02: Buttom Up
     int bottomUp(vector<int>& cost, int n) {
         //Goal is to reach top(just beyond the last index)
@@ -62,9 +78,15 @@ class Solution {
         
         int n = cost.size();
         t.resize(n, -1);
-        //return min(solve(cost,0,n), solve(cost,1,n) );
-        //return bottomUp(cost,n);
-        
+       //Method-01
+        return min(solve(cost,0,n), solve(cost,1,n) );
+      
+        // The top is reached from either the last or second-to-last step (Method-02)
+        return min(solve(cost, n - 1, t), solve(cost, n - 2, t));
+
+        //Method-03
+        return bottomUp(cost,n);
+      //Method-04
         return spaceOptimized(cost,n);
     }
 };
