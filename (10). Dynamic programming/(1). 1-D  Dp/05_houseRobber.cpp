@@ -80,29 +80,35 @@ public:
 
 class Solution {
 public:
-//TC=O(n)
-    int solve(vector<int>& nums, int idx, int end, vector<int>& dp) {
-        if(idx > end) return 0;
+    int t[101];
+    int solve(vector<int>& nums,int n,int start){
+        if(n<start){
+            return 0;
+        }
+        if(t[n]!=-1){
+            return t[n];
+        }
+        int take= nums[n] + solve(nums,n-2,start);
+        int skip= solve(nums,n-1,start);
 
-        if(dp[idx] != -1) return dp[idx];
-
-        int take = nums[idx] + solve(nums, idx + 2, end, dp);
-        int skip = solve(nums, idx + 1, end, dp);
-
-        return dp[idx] = max(take, skip);
+        return t[n]=max(take,skip);
     }
-    
     int rob(vector<int>& nums) {
         
-        int n = nums.size();
-        if(n == 1) return nums[0];
-        //case-1:- Take first skip last [0,...n-2]
-        vector<int> dp1(n, -1);
-        int case1 = solve(nums, 0, n-2, dp1); 
-        //case-2:- Take take last skip first [1,...n-1]
-        vector<int> dp2(n, -1);
-        int case2 = solve(nums, 1, n-1, dp2);
-
-        return max(case1, case2);
+        int n=nums.size(); 
+        if(n==0) return 0;
+        if(n==1) return nums[0];
+        
+        // Scenario 1: Rob from house 0 to n-2 (ignore last house)
+        memset(t, -1, sizeof(t));
+        int ans1 = solve(nums, n - 2, 0);
+        
+        // Scenario 2: Rob from house 1 to n-1 (ignore first house)
+        // CRITICAL: Reset memoization array so dirty values aren't reused
+        memset(t, -1, sizeof(t));
+        int ans2 = solve(nums, n - 1, 1);
+        
+        return max(ans1, ans2);
     }
+    
 };
