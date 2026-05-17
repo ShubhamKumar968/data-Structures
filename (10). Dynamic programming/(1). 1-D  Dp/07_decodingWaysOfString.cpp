@@ -95,3 +95,32 @@ class Solution {
         return bottomUp_2(digits);
     }
 };
+
+
+//basic approach
+
+int t[1001];
+    int solve(string&s, int i, int n){
+        
+        if(i>=n){
+            return 1;
+        }
+        
+        if(t[i]!=-1) return t[i];
+        
+        int one=0;
+        if(s[i]>='1' && s[i]<='9'){
+            one+=solve(s,i+1,n);
+        }
+        
+        int two=0;
+        if(i+1<n){
+            if( ( s[i]=='1' && s[i+1]>='0' && s[i+1]<='9' ) ||
+               ( s[i]=='2' && s[i+1]>='0' && s[i+1]<='6' ) ){
+               
+                two+=solve(s,i+2,n);
+            }
+        }
+        
+        return t[i]=one+two;
+    }
