@@ -100,7 +100,46 @@ public:
     }
 };
 
-//(3) Jump game-4(bfs)
+//(3) Jump gae-3 (recursion+vis array)
+class Solution {
+public:
+    int t[50001];
+    bool solve(vector<int>& arr, int idx,vector<bool>&vis){
+        if(arr[idx]==0){
+            return true;
+        }
+
+        if(idx>=arr.size()) return false;
+
+        if(t[idx]!=-1){
+            return t[idx];
+        }
+
+        bool right=false;
+        if(idx+arr[idx]<arr.size() && !vis[idx+arr[idx]]){
+            vis[idx+arr[idx]]=true;
+            right=solve(arr,idx+arr[idx],vis);
+        }
+        
+        bool left=false;
+        if(idx-arr[idx]>=0 && !vis[idx-arr[idx]]){
+            vis[idx-arr[idx]]=true;
+            left=solve(arr,idx-arr[idx],vis);
+        }
+
+        return t[idx]= (left || right);
+    }
+
+    bool canReach(vector<int>& arr, int start) {
+        int n=arr.size();
+        memset(t,-1,sizeof(t));
+        vector<bool>vis(n,false);
+        return solve(arr,start,vis);
+    }
+};
+
+
+//(4) Jump game-4(bfs)
 
 //Return the minimum number of steps to reach the last index of the array
 //you can go from index i to {i-1,i+1, arr[i]==arr[j]}
