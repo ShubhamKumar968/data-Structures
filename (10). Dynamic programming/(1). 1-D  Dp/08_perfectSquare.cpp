@@ -22,10 +22,28 @@ public:
         }
         return dp[n]= minCount;
     }
+//Method-02: Bottom up
+
+    int bottomUp(int n){
+        vector<int>dp(n+1,0);
+        dp[0]=0;
+        
+        for(int i=1;i<=n;i++){
+           int mini=INT_MAX;
+           // Try subtracting all possible perfect squares less than or equal to i
+           for(int j=1;j*j<=i;j++){
+              mini=min(mini, 1+dp[i-j*j]);
+           }
+           dp[i]=mini;// Save the absolute minimum found
+        }
+        return dp[n];
+    }
 
     int numSquares(int n) {
         vector<int>dp(n+1,-1);
         return solve(n,dp);
+
+        return bottomUp(n);
     }
 
 };
