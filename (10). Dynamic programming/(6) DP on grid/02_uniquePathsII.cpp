@@ -17,15 +17,12 @@ public:
         }
 
         if(t[i][j]!=-1) return t[i][j];
-        
-        int temp=grid[i][j];
-        grid[i][j]=-1;
-        
+
+         // Do not use the visited logic if omly 2 direction is given
         
         int down=solve(grid,m,n,i+1,j);
         int right=solve(grid,m,n,i,j+1);
         
-        grid[i][j]=temp;
         return t[i][j]=(down+right);
         
     }
