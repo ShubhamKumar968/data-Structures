@@ -77,7 +77,7 @@ public:
 };
 
 //Question-2:- House Robber-2(circular)
-
+//Recursion+ memo
 class Solution {
 public:
     int t[101];
@@ -108,6 +108,42 @@ public:
         memset(t, -1, sizeof(t));
         int ans2 = solve(nums, n - 1, 1);
         
+        return max(ans1, ans2);
+    }
+
+//Method-02: Bottom up
+int bottomUp(vector<int>& nums, int start, int end) {
+        
+        if (start > end) return 0;
+        int length = end - start + 1;
+        // dp[i] stores the max money collectable up to the i-th house in our relative range
+        vector<int> dp(length, 0);
+
+        // Base cases initialized for our segment subproblem
+        dp[0] = nums[start];
+        dp[1] = max(nums[start], nums[start + 1]);
+
+        // Fill table forward
+        for (int i = 2; i < length; i++) {
+            int take = nums[start + i] + dp[i - 2];
+            int skip = dp[i - 1];
+            dp[i] = max(take, skip);
+        }
+
+        return dp[length - 1];
+    }
+    
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        if (n == 1) return nums[0];
+
+        // Scenario 1: Rob from house 0 to n-2 (completely skip the last house)
+        int ans1 = bottomUp(nums, 0, n - 2);
+
+        // Scenario 2: Rob from house 1 to n-1 (completely skip the first house)
+        int ans2 = bottomUp(nums, 1, n - 1);
+
         return max(ans1, ans2);
     }
     
