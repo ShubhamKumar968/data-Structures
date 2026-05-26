@@ -4,32 +4,34 @@ using namespace std;
 
 class Solution {
   public:
-    
-    vector<double> getMedian(vector<int> &arr) {
-        
+   
 //Method-01 (Brute Force) using Sorting =>O(N^2*logN)
-
-        vector<double> result;
-        vector<int> temp;
-    
-        for(int i = 0; i < arr.size(); i++) {
+    vector<double>solve(vector<int> &arr){
+        
+        int n=arr.size();
+        vector<double>res(n,0);
+        
+        vector<int>temp;
+        for(int i=0;i<n;i++){
             
             temp.push_back(arr[i]);
-            sort(temp.begin(), temp.end());
+            sort(temp.begin(),temp.end());
+            int size=temp.size();
             
-            int n = temp.size();
-            
-            if(n % 2 != 0) {
-                result.push_back(temp[n / 2]);
-            } else {
-                double median = (temp[n / 2 - 1] + temp[n / 2]) / 2.0;
-                result.push_back(median);
+            if(size%2!=0){
+                res[i]=temp[size/2];
+            }else{
+                res[i]= (temp[size/2]+ temp[(size/2)-1])/2.0;
             }
+            
         }
-        return result;
         
+        return res;
+    }
+    
 //Method-02 Optimal ( Using max & min Heap )  => O(N* logN)
-
+    vector<double>optimal(vector<int> &arr){
+        
         vector<double> result;
         priority_queue<int>max;//Max Heap (left side) → stores smaller half
         priority_queue<int,vector<int>, greater<>>min;//Min Heap (right side) → stores larger half
@@ -66,7 +68,16 @@ class Solution {
             }
             
         }
-        
+    
         return result;
     }
+    
+    vector<double> getMedian(vector<int> &arr) {
+        // code here
+       return solve(arr);
+       
+       return optimal(arr);
+    }
 };
+
+    
