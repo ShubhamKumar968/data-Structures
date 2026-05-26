@@ -2,47 +2,51 @@
 using namespace std;
 #include<bits/stdc++.h>
 
-//Method-01 {Using Heap}
 
- typedef pair<int,int>p;
-    vector<int> mergeArrays(vector<vector<int>> &mat) {
-        // Code here
+class Solution {
+  public:
+    //Method-01 {Using min-Heap} because we have to sort smallest element first
+    typedef pair<int,pair<int,int>>p;
+    vector<int> solve(vector<vector<int>> &mat){
         
         int n=mat.size();
-        // Min Heap: {value, {row, col}}
-        priority_queue< pair<int,p>, vector<pair<int,p>>, greater<> >pq;
+        int m=mat[0].size();
         
-        // Step 1: Push first element of each row
+        priority_queue<p,vector<p>,greater<p>>pq;
+        vector<int>res;
+        //Push 1st elements of each rows into the min-heap for columnwise traversal 
         for(int i=0;i<n;i++){
-            if(!mat[i].empty()){
-                pq.push({mat[i][0], {i, 0}});
-            }
+            pq.push({mat[i][0],{i,0}});
         }
         
-        // Step 2: Process heap
-        vector<int>res;
+        // Pop exactly k-1 times
         while(!pq.empty()){
-            
+
+         //Process heap
             auto curr=pq.top();
             pq.pop();
             
-            int ele=curr.first;
-            int i=curr.second.first;
-            int j=curr.second.second;
+            res.push_back(curr.first);
             
-            res.push_back(ele);
+            int row=curr.second.first;
+            int col=curr.second.second;
             
-            // Step 3: Push next element from same row
-            if(j+1 < mat[i].size()){
-                pq.push({mat[i][j+1], {i,j+1}});
+            
+            // If there is a next element in the same row, push it
+            if(col+1<m){
+                pq.push({mat[row][col+1],{row,col+1}});
             }
         }
-        
+        // The top element is now exactly the k-th smallest element
         return res;
     }
+    vector<int> mergeArrays(vector<vector<int>> &mat) {
+        // Code here
+        return solve(mat);
+    }
+};
 
 
-    
 // Method-02: (Using Recursion)
 class Solution {
   public:
