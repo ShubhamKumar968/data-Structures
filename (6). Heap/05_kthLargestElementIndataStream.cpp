@@ -4,27 +4,28 @@ using namespace std;
 
 class Solution {
   public:
-    vector<int> kthLargest(int k, int arr[], int n) {
+    vector<int> kthLargest(vector<int>& arr, int k){
         // code here
-        vector<int>res(n,0);
-        priority_queue<int,vector<int>,greater<int> >pq;//min heap
         
+        int n=arr.size();
+        vector<int>res(n,0);
+        
+        priority_queue<int,vector<int>,greater<int>>pq;
         for(int i=0;i<n;i++){
-            
             pq.push(arr[i]);
             
-            // Maintain heap size = k
-            if(pq.size() > k){
-                pq.pop();
+            if(pq.size()<k){
+                res[i]=-1;
             }
-            
-            // If less than k elements
-            if(pq.size() < k){
-                res[i] = -1;
-            } else {
-                res[i] = pq.top(); // kth largest
+            else{
+                // Maintain heap size = k
+                while(pq.size()>k){
+                    pq.pop();
+                }
+                res[i]=pq.top();// kth largest
             }
         }
+        
         return res;
     }
 };
