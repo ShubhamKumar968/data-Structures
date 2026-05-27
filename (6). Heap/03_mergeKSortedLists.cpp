@@ -16,9 +16,61 @@ class Node{
 
 };
 
-//Method-1 Using divide and conquer (TC= O(n*log(k)))
 class Solution {
   public:
+    //Method-1 Using Min heap
+    struct compare{
+        
+        bool operator()(Node* a, Node* b){
+            // For a Min-Heap, return true if a->data > b->data
+            return a->data > b->data;
+        }
+    };
+    
+    //TC=O(nlogk)
+    Node* mergeKLists(vector<Node*>& arr) {
+        
+        //'a->data > b->data' evaluates to true when 'a' has a larger value
+        auto cmp=[](Node* a, Node* b){
+            return a->data > b->data;
+        };
+        
+        priority_queue<Node*,vector<Node*>,decltype(cmp)>pq(cmp);
+        // Step 1: Push first node of each list
+        //arr[i] = address of first node only
+        // Heap stores Node* (just pointers), NOT entire lists
+        
+        // Push the head of each non-empty linked list into the min-heap
+        for (Node* head : arr) {
+            if (head != nullptr) { // Fixes the Segmentation Fault edge case
+                pq.push(head);
+            }
+        }
+        
+        Node* dummy = new Node(-1);
+        Node* tail = dummy;
+        
+        // Step 2: Process heap
+        while(!pq.empty()){
+            
+            Node* smallest = pq.top();
+            pq.pop();
+            
+            // Attach smallest node to result
+            tail->next = smallest;
+            tail = tail->next;
+            
+            // Push next node of extracted element
+            if(smallest->next){
+                pq.push(smallest->next);
+            }
+        }
+        
+        return dummy->next;
+    }
+
+//Method-2 Using divide and conquer (TC= O(n*log(k)))
+
     //Merge two sorted linked lists (recursive)
     Node* merge2list(Node* l1, Node* l2){
         if(!l1) return l2;
@@ -65,51 +117,4 @@ class Solution {
     }
 };
 
-//Method-2 Using Min heap
-class Solution {
-  public:
-    
-    struct compare {
-        bool operator()(Node* a, Node* b) {
-            return a->data > b->data; // min heap
-        }
-    };
-    
-    Node* mergeKLists(vector<Node*>& arr) {
-        int n = arr.size();
-        
-        // Min heap
-        priority_queue<Node*, vector<Node*>, compare> pq;
-        
-        // Step 1: Push first node of each list
-        //arr[i] = address of first node only
-        // Heap stores Node* (just pointers), NOT entire lists
-        
-        for(int i = 0; i < n; i++){
-            if(arr[i] != NULL){
-                pq.push(arr[i]);
-            }
-        }
-        
-        Node* dummy = new Node(-1);
-        Node* tail = dummy;
-        
-        // Step 2: Process heap
-        while(!pq.empty()){
-            
-            Node* smallest = pq.top();
-            pq.pop();
-            
-            // Attach smallest node to result
-            tail->next = smallest;
-            tail = tail->next;
-            
-            // Push next node of extracted element
-            if(smallest->next){
-                pq.push(smallest->next);
-            }
-        }
-        
-        return dummy->next;
-    }
-};
+
