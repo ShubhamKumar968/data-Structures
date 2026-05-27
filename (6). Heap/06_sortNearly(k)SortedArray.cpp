@@ -27,27 +27,30 @@ class Solution {
     // TC=O(nlogk) ; SC=O(k)
     void nearlySorted(vector<int>& arr, int k) {
         // code here
-        priority_queue<int,vector<int>,greater<int>>pq;
-        int n=arr.size();
+        int n = arr.size();
+    
+        // Create a min-heap
+        priority_queue<int, vector<int>, greater<int>> pq;
         
-        int idx=0;
-        for(int i=0;i<n;i++){
-            
-            while(pq.size()>k){ //Always maintain heap size of k
-                arr[idx++]=pq.top();
-                pq.pop();//O(log k)
-            }
-            
-            pq.push(arr[i]);//O(log k)
+        // Insert the first k + 1 elements 
+        // Min-heap size will be at most k + 1(due to elements are atmost k- position away)
+        for (int i = 0; i <= min(k, n - 1); i++) {
+            pq.push(arr[i]);
         }
         
-        while(!pq.empty()){
-            
-            arr[idx++]=pq.top();
+        int index = 0;
+        // Process the remaining elements of the array
+        for (int i = k + 1; i < n; i++) {
+            arr[index++] = pq.top();
+            pq.pop();
+            pq.push(arr[i]);
+        }
+        
+        // Clean up the remaining elements left in the heap
+        while (!pq.empty()) {
+            arr[index++] = pq.top();
             pq.pop();
         }
-        
-        return;
     }
 };
 
