@@ -48,45 +48,44 @@ public:
 
 class Solution {
 public:
-    
+    //TC=O(N*L + M*L* logK); SC= O(M*L + K*L)
+    typedef pair<int,string>p;
     vector<string> topKFrequent(vector<string>& words, int k) {
-        //TC=O(N*L + M*L* logK); SC= O(M*L + K*L)
+        if(words.size()<k) return {};
+        
         unordered_map<string,int>mp;
-        for(auto &x: words){
+        for(auto &x:words){
             mp[x]++;
         }
-
-        auto cmp=[&](pair<string,int>&a, pair<string,int>&b){//O(L)
-                
-                //(Kyunki priority queue ulta behave karti hai, True wala element top par jata hai).
-
-                // Case 1: Agar dono words ki frequency barabar hai
-                if(a.second==b.second){
-                    return a.first < b.first;//Humein Bada Word (alphabetically) pop karna hai?
-                }
-
-                // Case 2: Agar frequencies alag hain
-                //Humein Low Frequency pop karni hai?
-                return a.second > b.second;//{true-> 'a' ki frequency kam hai, use Top par rakho (Pop it).}
+        
+        auto cmp=[&](p&a,p&b){
+            
+            if(a.first!=b.first){
+                return a.first > b.first;// Smaller frequency stays at top (to be popped)
+            }
+            return a.second < b.second;//If frequencies match, the Largerr value should stay at the top (to be popped)
         };
-
-        //min heap
-        priority_queue< pair<string,int>, vector< pair<string,int> >, decltype(cmp) >pq(cmp);
-
-        for(auto it:mp){
-            pq.push(it);
+        
+        priority_queue<p,vector<p>,decltype(cmp)>pq(cmp);//min heap
+        
+        for(auto &it:mp){
+            pq.push({it.second,it.first});
+            
             while(pq.size()>k){
                 pq.pop();
             }
         }
-
-        vector<string>ans;
+        
+        vector<string>res;
         while(!pq.empty()){
-            ans.push_back(pq.top().first);
+            res.push_back(pq.top().second);
             pq.pop();
         }
-        // We need Highest Freq at front, so reverse:
-        reverse(ans.begin(), ans.end());
-        return ans;
+        
+        // Reverse to arrange from highest priority (best) to lowest priority (worst)
+        reverse(res.begin(),res.end());
+
+        return res;
     }
 };
+
