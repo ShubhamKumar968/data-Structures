@@ -6,46 +6,45 @@ using namespace std;
 
 class Solution {
   public:
-    
+  
     typedef pair<int,int>p;
     vector<int> topKFreq(vector<int> &arr, int k) {
         // Code here
-
-       unordered_map<int,int> mp;//space=O(n)
-        for(auto &x: arr){
+        
+        if(arr.size()<k) return {};
+        
+        unordered_map<int,int>mp;
+        for(auto &x:arr){
             mp[x]++;
         }
         
-        //(Kyunki priority queue ulta behave karti hai, True wala element top par jata hai, aur pop ho jata hai).
-        auto cmp= [&](p& a, p& b){//O(k log k)
+        auto cmp=[&](p&a,p&b){
             
-           if (a.second == b.second) {
-              // Ties: Pop the smaller element to keep the larger one
-              return a.first > b.first; 
+            if(a.first!=b.first){
+                return a.first > b.first;// Smaller frequency stays at top (to be popped)
             }
-            // General: Pop the smaller frequency
-            return a.second > b.second;
+            return a.second > b.second;//If frequencies match, the SMALLER value should stay at the top (to be popped)
         };
-
-        //min heap of size k
-        priority_queue<p, vector<p>, decltype(cmp) > pq(cmp);//space=O(k)
         
-        for(auto& it : mp){//O(nlogk)
-            pq.push(it);//O(log k)
-            if(pq.size() > k){
-                pq.pop();//O(log k)
+        priority_queue<p,vector<p>,decltype(cmp)>pq(cmp);//min heap
+        
+        for(auto &it:mp){
+            pq.push({it.second,it.first});
+            
+            while(pq.size()>k){
+                pq.pop();
             }
         }
         
-        vector<int> res;//space=O(k)
+        vector<int>res;
         while(!pq.empty()){
-            res.push_back(pq.top().first);
+            res.push_back(pq.top().second);
             pq.pop();
         }
         
-        // We need Highest Freq at front, so reverse:
-        reverse(res.begin(), res.end());
+        // Reverse to arrange from highest priority (best) to lowest priority (worst)
+        reverse(res.begin(),res.end());
+      
         return res;
     }
-    
 };
