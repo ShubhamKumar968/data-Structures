@@ -15,14 +15,14 @@ class Node {
 };
 
 
-//Method-01:
+//Method-01: Use BFS & it is same as nodes at distance k from target nodes
 
 class Solution {
   public:
     int minTime(Node* root, int target) {
         // code here
         
-        // Step 1: Parent mapping to create graph
+        // Step 1: Parent mapping of every node to create graph
         unordered_map<Node*, Node*> parent;
         Node* targetNode = NULL;
         
@@ -61,6 +61,7 @@ class Solution {
             bool burned = false;
             
             while(n--){
+                // Traverse all neighbors (left child, right child, and parent)
                 Node* curr = burn.front(); 
                 burn.pop();
                 
@@ -86,74 +87,9 @@ class Solution {
                 }
                 
             }
+            // If fire spread to any new nodes during this second, increment the time counter
             if(burned==true) times++;
         }
-        return times;
-    }
-};
-
-
-//Method-02
-
-class Solution {
-public:
-    // Step 1: Build the undirected graph using node values
-    void makeGraph(unordered_map<int, vector<int>> &adj, int parent, Node* curr) {
-        if (curr == NULL) {
-            return;
-        }
-        
-        // If a valid parent exists, create an undirected edge between parent and child
-        if (parent != -1) {
-            adj[parent].push_back(curr->data);
-            adj[curr->data].push_back(parent);
-        }
-        
-        // Recurse for left and right subtrees, passing the current node's data as the parent
-        makeGraph(adj, curr->data, curr->left);
-        makeGraph(adj, curr->data, curr->right);
-    }
-
-    int minTime(Node* root, int target) {
-        if (!root) return 0;
-
-        // Step 1: Convert the tree structure into a graph adjacency list
-        unordered_map<int, vector<int>> adj;
-        makeGraph(adj, -1, root); // Pass -1 as the initial dummy parent for the root node
-        
-        // Step 2: Standard BFS traversal starting from the target value
-        queue<int> q;
-        unordered_map<int, bool> vis;
-        
-        q.push(target);
-        vis[target] = true;
-        
-        int times = 0;
-        
-        while (!q.empty()) {
-            int n = q.size();
-            bool burned = false;
-            
-            while (n--) {
-                int curr = q.front();
-                q.pop();
-                
-                // Traverse all neighbors (left child, right child, and parent)
-                for (int neighbor : adj[curr]) {
-                    if (!vis[neighbor]) {
-                        q.push(neighbor);
-                        vis[neighbor] = true;
-                        burned = true; // Fire successfully spreads to this neighbor
-                    }
-                }
-            }
-            
-            // If fire spread to any new nodes during this second, increment the time counter
-            if (burned) {
-                times++;
-            }
-        }
-        
         return times;
     }
 };
