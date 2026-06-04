@@ -13,48 +13,49 @@ class Solution {
 //Method-01: Memoization using offset to be safe from -ve sum
 
     // n <= 50, sum range -1000 to 1000 (size 2001)
-    int t[51][2001]; 
-    int offset = 1000;
-    
-    int memoUsigOffset(vector<int>& arr, int target,int n, int idx,int currentSum){
-        
-        if(idx==n){//All numbers must be used
-            if(currentSum==target) return 1;
-            else return 0;
-        }
-        
-        // Memoization Check (using offset)
-        if (t[idx][currentSum + offset] != -1) {
-            return t[idx][currentSum + offset];
-        }
-        
-        int plus=memoUsigOffset(arr,target,n,idx+1,currentSum+arr[idx]);
-        int minus=memoUsigOffset(arr,target,n,idx+1,currentSum-arr[idx]);
-        
-        return t[idx][currentSum + offset]=(plus+minus);
-    }
 
+    int t[51][2001];//offset=1000
+    int solve(vector<int>& arr, int target,int n){
+        if(n==0){
+            if(target==0){
+                return 1;
+            }
+            return 0;
+        }
+        
+        if(t[n][target+1000]!=-1) return t[n][target+1000];
+        
+        int plus= solve(arr,target-arr[n-1],n-1);
+        int minus=solve(arr,target+arr[n-1],n-1);
+        
+        return t[n][target+1000]=plus+minus;
+    }
 //Method-02: memoization using map
 
     // Use a map for memoization because 'sum' can be negative
+    // Define the map tracker using the (n, target) pair as a unique key
     map<pair<int, int>, int> memo;
-    
-    int memoUsingmap(vector<int>& arr, int target, int n, int idx, int currentSum) {
-        // BASE CASE: All numbers must be used
-        if (idx == n) {
-            return (currentSum == target) ? 1 : 0;
+
+    int solve(vector<int>& arr, int target, int n) {
+        // Base Case
+        if (n == 0) {
+            return (target == 0) ? 1 : 0;
         }
-    
-        // Memoization Check
-        if (memo.count({idx, currentSum})) {
-            return memo[{idx, currentSum}];
+        
+        // Create the state key pair
+        pair<int, int> state = {n, target};
+        
+        // Check if this specific state has already been solved
+        if (memo.count(state)) {
+            return memo[state];
         }
-    
-        // Every number MUST have a '+' or '-'
-        int plus = memoUsingmap(arr, target, n, idx + 1, currentSum + arr[idx]);
-        int minus = memoUsingmap(arr, target, n, idx + 1, currentSum - arr[idx]);
-    
-        return memo[{idx, currentSum}] = plus + minus;
+        
+        // Branch out both choices
+        int plus = solve(arr, target - arr[n - 1], n - 1);
+        int minus = solve(arr, target + arr[n - 1], n - 1);
+        
+        // Memoize and return
+        return memo[state] = plus + minus;
     }
 
     int totalWays(vector<int>& arr, int target) {
@@ -62,8 +63,8 @@ class Solution {
         int currentSum=0;
         int n=arr.size();
         memset(t, -1, sizeof(t));
-        return memoUsingmap(arr,target,n,0,currentSum);
-        //return memoUsigOffset(arr,target,n,0,currentSum);
+        return solve(arr, target, n);
+        
     }
 };
 
