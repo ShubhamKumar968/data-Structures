@@ -6,9 +6,9 @@ class Solution {
   public:
     
 //Method-01:{Recursion+ Memoization}
-    int solve(vector<int>& arr, int idx, int n, int currentSum, int totalSum,vector<vector<int>>& t) {
+    int solve(vector<int>& arr, int n, int currentSum, int totalSum,vector<vector<int>>& t) {
         //Range of subset sum of array=[0, totalSum];
-        if (idx == n) {
+        if (n==0) {
             // We have formed a subset S1 with sum = 'currentSum'
             // Therefore, S2 = totalSum - currentSum
             // The absolute difference is |S1 - S2|
@@ -19,22 +19,31 @@ class Solution {
         }
     
         // Check if we've already calculated the min diff for this index and sum
-        if (t[idx][currentSum] != -1) return t[idx][currentSum];
+        if (t[n][currentSum] != -1) return t[n][currentSum];
     
-        int take = solve(arr, idx + 1, n, currentSum + arr[idx], totalSum,t);
-        int skip = solve(arr, idx + 1, n, currentSum, totalSum,t);
+        int take = solve(arr,  n-1, currentSum + arr[n-1], totalSum,t);
+        int skip = solve(arr, n-1, currentSum, totalSum,t);
     
-        return t[idx][currentSum] = min(take, skip);
+        return t[n][currentSum] = min(take, skip);
     }
 
- //Method-02: {Bottom Up}
+    int minDifference(vector<int>& arr) {
+        // code here
+        int totalSum=0;
+        int n=arr.size();
+        for(auto &x: arr) totalSum+=x;
+        
+        vector<vector<int>> t(n + 1, vector<int>(totalSum + 1, -1));
+        return solve(arr,n,0,totalSum,t);
+    }
+
+//Method-02: {Bottom Up}
     int bottomUp(vector<int>& arr) {
         //dp[i][j] is the state that tells "Is it possible to form the sum j using any combination of the first i elements?"
         int n = arr.size();
         int totalSum = 0;
         for(auto &x : arr) totalSum += x;
-        //The closer S1 gets to the halfway point (totalSum/2), the smaller the difference |S1 - S2| becomes.
-        // so,We only need to check up to totalSum/2
+        //The closer S1 gets to the halfway point (totalSum/2), the smaller the difference |S1 - S2| becomes. so,We only need to check up to totalSum/2
         int range = totalSum / 2;
         
         // Use bool since we only care if the sum is possible
@@ -69,16 +78,6 @@ class Solution {
     }
     
     int minDifference(vector<int>& arr) {
-        // code here
-        
-        int totalSum=0;
-        int n=arr.size();
-        for(auto &x: arr) totalSum+=x;
-        // Dynamically size the table based on n and totalSum
-        // This ensures n * totalSum stays within the 10^5 limit
-        vector<vector<int>> t(n + 1, vector<int>(totalSum + 1, -1));
-        return solve(arr,0,n,0,totalSum,t);
-        
-       // return bottomUp(arr);
+        return bottomUp(arr);
     }
 };
