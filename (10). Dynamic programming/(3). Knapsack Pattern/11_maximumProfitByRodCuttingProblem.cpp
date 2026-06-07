@@ -4,10 +4,37 @@ using namespace std;
 
 class Solution {
   public:
-    //n= remaining length of the rod
-    //idx=current piece length.
 
-//Method-01: {Recursion + Memoization}
+//Method-01: Standard Method:(From backward recursion
+    int t[1001][1001];
+    int solve(vector<int> &price, int length, int n){
+        
+        if(length<0 || n<=0){
+            return 0;
+        }
+        
+        if(t[n][length]!=-1){
+            return t[n][length];
+        }
+        int take=0;
+        if(length-n>=0){
+            take= price[n-1]+solve(price,length-n,n);
+            
+        }
+        
+        int skip=solve(price,length,n-1);
+        
+        return t[n][length]=max(take,skip);
+    }
+    int cutRod(vector<int> &price) {
+        // code here
+        int n=price.size();
+        memset(t,-1,sizeof(t));
+        return solve(price,n,n);
+    }
+
+//Method-02: {Recursion + Memoization}
+     //n= remaining length of the rod;  idx=current piece length
     int solve(vector<int> &price, int n, int idx,vector<vector<int>>&t) {
         // 1. Success Base Case: Rod is completely used up
         if (n == 0) {
@@ -46,7 +73,7 @@ class Solution {
                 
                 int skip = dp[i - 1][j];
                 int take = -1e9;
-                if (i <= j) {
+                if (j - i >=0) {
                     // price[i-1] is the value of the piece.
                     // We add it to the best value for the REMAINING length (j - i).
                     // We stay on row 'i' because we can use the same length again.
