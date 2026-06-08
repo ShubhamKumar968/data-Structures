@@ -6,20 +6,38 @@ class Solution {
   public:
 
   //Method-01: Recursion + Memoization
+
     int t[1001][1001];
-    int solve(string& s1, string& s2,int i, int j, int n, int m){
-        
-        if(i>=n || j>=m) return 0;
-        
-        if(t[i][j]!=-1) return t[i][j];
-        
-        if(s1[i]==s2[j]){
-            return t[i][j]=1 + solve(s1,s2,i+1,j+1,n,m);
+    int solve(string &s1, string &s2, int m, int n){
+        if(m<=0 || n<=0){
+            return 0;
         }
-        else{//If there is mismatch -> continuity break -> length=0
-            return t[i][j]=0;
+        
+        if(t[m][n]!=-1) return t[m][n];
+        
+        if(s1[m-1]==s2[n-1]){
+            return t[m][n]=1 + solve(s1,s2,m-1,n-1);
+        }else{//If there is mismatch -> continuity break -> length=0
+            
+            return t[m][n]= 0;
+            
         }
     }
+    int longCommSubstr(string& s1, string& s2) {
+        // code here
+        int m=s1.length();
+        int n=s2.length();
+        memset(t,-1,sizeof(t));
+        int maxLen=0;
+        //Check all possible index to finding longest substring
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                maxLen=max(maxLen, solve(s1,s2,i,j));
+            }
+        }
+        return maxLen;
+    }
+
 
     //Method-02: Bottom Up
     int bottomUp(string& s1, string& s2){
@@ -46,16 +64,6 @@ class Solution {
     
     int longCommSubstr(string& s1, string& s2) {
         // code here
-        int n=s1.length();
-        int m=s2.length();
-        memset(t,-1,sizeof(t));
-        int maxLen = 0;
-        for(int i = 0; i < n; i++) {
-            for(int j = 0; j < m; j++) {
-                maxLen = max(maxLen, solve(s1, s2, i, j, n, m));
-            }
-        }
-        return maxLen; 
-        //return bottomUp(s1,s2);
+       return bottomUp(s1,s2);
     }
 };
