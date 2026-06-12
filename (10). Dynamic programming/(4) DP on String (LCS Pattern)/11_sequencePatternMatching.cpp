@@ -3,31 +3,34 @@
 using namespace std;
 
 class Solution {
-public:
-//Method-01 Using LCS O(n*n)
-    int dp[101][10001];
-    int lcs(string s, string t, int m, int n){
+  public:
+    //Method-01: Using LCS O(n*n)
+    int lcs(string& s1, string& s2,int m, int n,vector<vector<int>>&t){
+        
         if(m<=0 || n<=0){
             return 0;
         }
-
-        if(dp[m][n]!=-1) return dp[m][n];
-
-        if(s[m-1]==t[n-1]){
-            return dp[m][n]=1+lcs(s,t,m-1,n-1);
-        }else{
-            return dp[m][n]=max(lcs(s,t,m-1,n), lcs(s,t,m,n-1));
+        if(t[m][n]!=-1){
+            return t[m][n];
         }
-
+        
+        if(s1[m-1]==s2[n-1]){
+            return t[m][n]=1+lcs(s1,s2,m-1,n-1,t);
+        }else{
+            return t[m][n]=max(lcs(s1,s2,m-1,n,t), lcs(s1,s2,m,n-1,t));
+        }
     }
-    bool isSubsequence(string s, string t) {
-        int m=s.length();
-        int n=t.length();
-        memset(dp,-1,sizeof(dp));
-        int res=lcs(s,t,m,n);
-
-        return res==m ? true: false;
-
+    bool isSubSeq(string& s1, string& s2) {
+        // code here
+        int m=s1.length();
+        int n=s2.length();
+        vector<vector<int>>t(m+1,vector<int>(n+1,-1));
+        
+        int length=lcs(s1,s2,m,n,t);
+        
+        return  length==m;
+    }
+};
         //Method-02 (2 Pointer Optimal)
         int i = 0, j = 0;
         while (i < s.length() && j < t.length()) {
@@ -39,4 +42,3 @@ public:
         // If we've matched all characters in 's', i will equal s.length()
         return i == s.length();
     }
-};
