@@ -2,6 +2,42 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+//(1) Minimum number of deletion to make string palindrome
+class Solution {
+  public:
+    
+    int t[1001][1001];
+    int solve(string &s, int st, int end){
+        
+        if(st>end){
+            return 0;
+        }
+        
+        if(t[st][end]!=-1){
+            return t[st][end];
+        }
+        
+        if(s[st]==s[end]){
+            // No deletion is needed here (cost = 0). Shrink the window from both ends.
+            return t[st][end]=0 + solve(s,st+1,end-1);
+        }else{
+            //   1. Delete s[st]: Increment cost by 1, move start pointer forward -> solve(s, st + 1, end)
+            //   2. Delete s[end]: Increment cost by 1, move end pointer backward -> solve(s, st, end - 1)
+            return t[st][end]=1 + min( solve(s,st+1,end), solve(s,st,end-1));
+        }
+        
+    }
+    int minDeletions(string &s) {
+        // code here
+        memset(t,-1,sizeof(t));
+        //Method-01:
+        return solve(s,0,s.length()-1);
+        //Method-02:
+       // return  s.length()-lcs(s,rev(s));
+    }
+};
+
+//(2) Minimum number of insertion to make string palindrome
 
 class Solution {//TC=SC=O(n*n)
 public:
@@ -16,9 +52,11 @@ public:
         if(t[i][j]!=-1){
             return t[i][j];
         }
-        if(s[i]==s[j]){
+        if(s[i]==s[j]){//if both character matched then there is no need to insert any characterr just move both pointer
             return  t[i][j]=memo(s,i+1,j-1);
         }else{
+            //(1) insert a character at left to match end character, left pointer remain same but decreament the right pointer
+            //(2) insert a character at right to match start character, right pointer remain same but increment the left pointer
             return  t[i][j]= min( 1+ memo(s,i+1,j), 1+ memo(s,i,j-1));
         }
 
