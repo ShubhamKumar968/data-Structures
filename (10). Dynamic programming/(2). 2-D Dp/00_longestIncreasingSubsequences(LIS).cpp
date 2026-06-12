@@ -4,6 +4,7 @@ using namespace std;
 
 class Solution {
   public:
+
 //Method-01: recursion + Memoization {Recursion->O(2^n); Memo->O(n^2 }
     int t[1001][1001];
     int solve(vector<int>& arr,int idx, int prev_idx, int n){
@@ -26,57 +27,33 @@ class Solution {
         return t[idx][prev_idx+1]= max(take,skip);
     }
     
-//Method-02:- Bottom Up (O(n*n))
-    int bottomUp(vector<int>& arr){
-        //dp[i] -> longest increasing subsequences ending at index i.
-        
-        int n = arr.size();
-        // dp[curr_idx][prev_idx + 1]
-        vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
     
-        // Fill table from bottom (n-1) to top (0)
-        for (int idx = n - 1; idx >= 0; idx--) {
-            for (int prev = idx - 1; prev >= -1; prev--) {
-                
-                // Option 1: Skip
-                int res = dp[idx + 1][prev + 1];
-    
-                // Option 2: Take
-                if (prev == -1 || arr[idx] > arr[prev]) {
-                    res = max(res, 1 + dp[idx + 1][idx + 1]);
-                }
-    
-                dp[idx][prev + 1] = res;
-            }
-        }
-    
-        return dp[0][0]; // Answer for starting at index 0 with no prev (-1 + 1 = 0)
-    }
-    
-//Method-03:- Space Optimized Bottom Up
-    int bottomUp2(vector<int>& arr) {
-        int n = arr.size();
+//Method-02:- Space Optimized Bottom Up (O(n*n))
+
+    int LIS(vector<int>&arr){
+        int n=arr.size();
         if (n == 0) return 0;
-    
         // dp[i] stores the length of LIS ending at index i
         // Every element is an LIS of length 1 by itself
-        vector<int> dp(n, 1);
-        int max_lis = 1;
-    
-        for (int i = 1; i < n; i++) {
-            for (int j = 0; j < i; j++) {
-                if (arr[i] > arr[j]) {
-                    // If current element is greater, try to extend the sequence
-                    dp[i] = max(dp[i], 1 + dp[j]);
+        vector<int>dp(n+1,1);
+        int maxLen=1;
+        
+        for(int i=0;i<n;i++){
+            for(int j=i-1;j>=0;j--){
+                if(arr[i]>arr[j]){
+                   // If current element is greater, try to extend the sequence
+                    dp[i]= max(dp[i],1+ dp[j]);
                 }
             }
-            max_lis = max(max_lis, dp[i]);
+            
+            maxLen=max(maxLen,dp[i]);
         }
-    
-        return max_lis;
+        
+        return  maxLen;
     }
 
-//Method-04:- using patience sorting O(nlogn)
+
+//Method-03:- using patience sorting O(nlogn)
     int optimal(vector<int>& arr) {
         
         int n = arr.size();
@@ -110,6 +87,8 @@ class Solution {
         return optimal(arr);
     }
 };
+
+
 
 //  Print Longest Increasing subsequence(LIS)
 class Solution {
@@ -150,6 +129,6 @@ class Solution {
     vector<int> getLIS(vector<int>& arr) {
         // Code here
         //int res= solve(arr,0,-1);
-        return bottomUp(arr);
+        return LIS(arr);
     }
 };
