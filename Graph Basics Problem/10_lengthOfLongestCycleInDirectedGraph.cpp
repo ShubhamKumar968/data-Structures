@@ -4,49 +4,51 @@ using namespace std;
 
 class Solution {
   public:
-  
-    int ans = -1;
-
-    void dfs(int src,unordered_map<int,vector<int>>& adj,
-        vector<bool>& vis,vector<bool>& currPath,vector<int>& cnt,int step){
-    
-        vis[src] = true;          // mark node as globally visited
-        currPath[src] = true;     // mark node in current DFS path
-        cnt[src] = step;          // store step (depth) of current node
-    
-        for (auto &nbr : adj[src]) {
-            // If neighbor not visited → continue DFS
-            if (!vis[nbr]) {
-                dfs(nbr, adj, vis, currPath, cnt, step + 1);
+    void dfs(vector<vector<int>>&adj,int node,int &maxLen,vector<int>&depth
+        ,int steps,vector<bool>&currPath, vector<bool>&vis){
+        
+        vis[node]=true;
+        currPath[node]=true;
+        steps++;// Increment depth for the current node
+        depth[node]=steps;//Number of recursive call till current node
+        
+        
+        for(auto &nbr:adj[node]){
+            
+            if(vis[nbr] && currPath[nbr]){//cycle found
+                maxLen=max(maxLen,depth[node]-depth[nbr]+1);
             }
-            // If neighbor is in current path → cycle detected
-            else if (currPath[nbr]) {
-                // cycle length = current depth - neighbor depth + 1
-                ans = max(ans, cnt[src] - cnt[nbr] + 1);
+            else if(!vis[nbr]){
+                dfs(adj,nbr,maxLen,depth,steps,currPath,vis);
             }
         }
-        currPath[src] = false; // backtrack: remove node from current path
-    }
-    
-    int longestCycle(int V, vector<vector<int>>& edges) {
         
-        unordered_map<int,vector<int>> adj;
-        for (auto &edge : edges) {
-            int u = edge[0];
-            int v = edge[1];
+        currPath[node]=false;
+    
+        return;
+    }
+    int longestCycle(int V, vector<vector<int>>& edges) {
+        // code here
+        vector<vector<int>>adj(V);
+        for(auto&e:edges){
+            int u=e[0];
+            int v=e[1];
+            
             adj[u].push_back(v);
         }
-    
-        vector<bool> vis(V, false);
-        vector<bool> currPath(V, false);
-        vector<int> cnt(V, 0);
-    
-        for (int i = 0; i < V; i++) {
-            if (!vis[i]) {
-                dfs(i, adj, vis, currPath, cnt, 0);  // start step = 0
+        
+        vector<bool>vis(V,false);
+        vector<bool>currPath(V,false);
+        vector<int>depth(V,0);
+        int maxLen=-1;//pass by refrence to store result globally
+        int steps=0;//pass by value for each component it may differ
+        
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                dfs(adj,i,maxLen,depth,steps,currPath,vis);
             }
         }
-    
-        return ans;
+        
+        return maxLen;
     }
 };
