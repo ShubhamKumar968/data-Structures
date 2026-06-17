@@ -5,76 +5,79 @@ using namespace std;
 class Solution {
   public:
     string findOrder(vector<string> &words) {
-        // code here
-        unordered_map<char, vector<char>> adj;   // adjacency list
-        unordered_map<char, int> indegree;       // indegree of each character
+        int V = words.size();
         
-        // Step 1: Initialize all characters in indegree map
-        for (auto &word : words) {
-            for (auto &ch : word) {
-                indegree[ch] = 0;
+        // Step 1: Initialize graph structures
+        unordered_map<int, vector<int>> adj;
+        unordered_map<int, int> indeg;
+        
+        // Track and initialize indegree for all unique characters present
+        for (auto& word : words) {
+            for (char c : word) {
+                int node = c - 'a';
+                indeg[node] = 0; 
             }
         }
         
-        // Step 2: Build graph by comparing adjacent words
-        for (int i = 0; i < words.size() - 1; i++) {
-            string w1 = words[i];
-            string w2 = words[i + 1];
+        // Step 2: Build the dependency graph by comparing adjacent words
+        for(int i = 0; i + 1 < V; i++){
+            string s1 = words[i];
+            string s2 = words[i+1];
             
-            int len = min(w1.size(), w2.size());
-            bool found = false;
-            
-            // Find first different character
-            for (int j = 0; j < len; j++) {
-                if (w1[j] != w2[j]) {
-                    adj[w1[j]].push_back(w2[j]);  // edge: w1[j] → w2[j]
-                    indegree[w2[j]]++;            // increase indegree
-                    found = true;
-                    break;
-                }
-            }
-            
-            // Step 3: Check invalid case (prefix issue)
-            // Example: "abc" before "ab" → invalid
-            if (!found && w1.size() > w2.size()) {
+            // Return empty if a longer word is incorrectly sorted before its prefix
+            if (s1.size() > s2.size() && s1.compare(0, s2.size(), s2) == 0) {
                 return "";
             }
-        }
-        
-        // Step 4: Push all nodes with indegree 0 into queue
-        queue<char> q;
-        for (auto &p : indegree) {
-            if (p.second == 0) {
-                q.push(p.first);
+            
+            int j = 0, k = 0;
+            // Find the first mismatching character between the two words
+            while(j < s1.size() && k < s2.size() && s1[j] == s2[k]){
+                j++;
+                k++;
+            }
+            
+            // If a valid mismatch exists, add a directed edge: u -> v
+            if (j < s1.size() && k < s2.size()) {
+                int u = s1[j] - 'a';
+                int v = s2[k] - 'a';
+                
+                adj[u].push_back(v);
+                indeg[v]++;
             }
         }
         
-        // Step 5: Perform BFS (Kahn's Algorithm)
-        string result = "";
+        // Step 3: Initialize Kahn's algorithm queue with 0-indegree nodes
+        queue<int> q;
+        for(auto &it: indeg){
+            if(it.second == 0){
+                q.push(it.first);
+            }
+        }
         
-        while (!q.empty()) {
-            char node = q.front();
+        // Step 4: Process components and extract topological order
+        string res = "";
+        while(!q.empty()){
+            int curr = q.front();
             q.pop();
             
-            result += node;  // add to answer
+            res += (curr + 'a'); // Reconvert index to character and store
             
-            // Reduce indegree of neighbors
-            for (auto &nbr : adj[node]) {
-                indegree[nbr]--;
+            // Reduce neighbors' indegrees; queue them if they hit 0 dependencies
+            for(auto &nbr: adj[curr]){
+                indeg[nbr]--;
                 
-                // If indegree becomes 0 → ready to process
-                if (indegree[nbr] == 0) {
+                if(indeg[nbr] == 0){
                     q.push(nbr);
                 }
             }
         }
         
-        // Step 6: Check for cycle
-        // If result size < total characters → cycle exists
-        if (result.size() < indegree.size()) {
+        // Step 5: Cycle detection verification
+        // If result size doesn't match total unique characters, a cycle exists
+        if (res.size() != indeg.size()) {
             return "";
         }
         
-        return result;
+        return res;
     }
 };
