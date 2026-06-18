@@ -38,67 +38,78 @@ class Solution {
             if(dist[i]==INT_MAX) dist[i]=-1;
         }
     }
-    
+};    
      
     //Method-2: topological sort {TC=O(V+E) } faster than dijkstra for DAG only
-    typedef pair<int,int>p;
-    void topologicalOrder(int u,unordered_map<int,vector<p>>&adj,stack<int>&st,vector<bool>&vis){
-         
-         vis[u]=true;
-         for(auto &nbr: adj[u]){
-             int v=nbr.first;
-             if(!vis[v]){
-                 topologicalOrder(v,adj,st,vis);
-             }
-         }
-         st.push(u);
+class Solution {
+  public:
+    typedef pair<int,int> p;
+    
+    // DFS helper to generate Topological Sort stack
+    void topoOrder(int src, vector<vector<p>>& adj, vector<bool>& vis, stack<int>& st){
+        vis[src] = true;
+        
+        for(auto &it: adj[src]){
+            int nbr = it.first;
+            if(!vis[nbr]){
+                topoOrder(nbr, adj, vis, st);
+            }
+        }
+        // Push node to stack only after processing all its dependencies
+        st.push(src);
     }
     
-    void topoSort(unordered_map<int,vector<p>>&adj,vector<int>&dist,int V){
+    vector<int> shortestPath(int V, int E, vector<vector<int>>& edges) {
+        // Step 1: Build the Adjacency List (Directed Graph with weights)
+        vector<vector<p>> adj(V);
+        for(auto &e: edges){
+            int u = e[0];
+            int v = e[1];
+            int w = e[2];
+            adj[u].push_back({v, w});
+        }
         
-        stack<int>st;
-        vector<bool>vis(V,false);
-        for(int i=0;i<V;i++){
+        // Step 2: Get a complete Topological Sort of the DAG
+        stack<int> st;
+        vector<bool> vis(V, false);
+        for(int i = 0; i < V; i++){
             if(!vis[i]){
-                topologicalOrder(i, adj, st, vis);
+                topoOrder(i, adj, vis, st);
             }
         }
         
-        dist[0]=0;  // source = 0
+        // Step 3: Initialize distances with infinity; source (node 0) is 0
+        vector<int> dist(V, INT_MAX);
+        dist[0] = 0;
         
+        // Step 4: Process vertices sequentially from the topological stack
         while(!st.empty()){
-            
-            int u=st.top();
+            int u = st.top();
             st.pop();
             
-            for(auto &nbr:adj[u]){
-                int v=nbr.first;
-                int cost=nbr.second;
-                
-                if(dist[u]!=INT_MAX && dist[u]+cost <dist[v]){
-                    
-                    dist[v]=dist[u]+cost;
-                }
+            // Skip processing if the current node is unreachable from source
+            if(dist[u] == INT_MAX){
+                continue;
             }
             
+            // Relax edges for all neighbors of node 'u'
+            for(auto &nbr: adj[u]){
+                int wt = nbr.second;
+                int v = nbr.first;
+                
+                if(dist[u] + wt < dist[v]){
+                    dist[v] = dist[u] + wt;
+                }
+            }
         }
         
-        for(int i=0;i<V;i++){
-            if(dist[i]==INT_MAX) dist[i]=-1;
+        // Step 5: Post-process unreachable nodes to match problem constraints (-1)
+        for(int i = 0; i < V; i++) {
+            if(dist[i] == INT_MAX) {
+                dist[i] = -1;
+            }
         }
-    }
-    vector<int> shortestPath(int V, int E, vector<vector<int>>& edges) {
         
-        vector<int>dist(V,INT_MAX);
-        unordered_map<int,vector<p>>adj;
-        
-        for(auto &e:edges){
-            
-            adj[e[0]].push_back({e[1],e[2]});
-        }
-        //dijkstra(adj,dist,V);
-        topoSort(adj,dist,V);
         return dist;
-        
     }
 };
