@@ -6,70 +6,75 @@ using namespace std;
 // Time Complexity: O((m+n)logn); SC= O(m+n)
 class Solution {
   public:
+    typedef pair<int,int> p;
     
-    typedef pair<int,int>p;
-    void dijkstra( vector<vector<p>>&adj,int src,vector<int>&dist,vector<int>&parent){
+    vector<int> dijkstra(int src, int V, vector<vector<p>>& adj){
+        // Size arrays to V+1 to support 1-based indexing
+        vector<int> dist(V + 1, INT_MAX);
+        vector<int> parent(V + 1, -1);
         
-        priority_queue<p,vector<p>,greater<p>>pq;
-        dist[src]=0;
-        pq.push({0,src});
+        dist[src] = 0;
+        
+        // Min-heap tracking {distance, node}
+        priority_queue<p, vector<p>, greater<p>> pq;
+        pq.push({0, src});
         
         while(!pq.empty()){
-            
-            p curr=pq.top();
+            auto [d, u] = pq.top();
             pq.pop();
             
-            int d=curr.first;
-            int u=curr.second;
-            
-            if(d>dist[u]) continue;
-            
-            for(auto &nbr:adj[u]){
-                
-                int v=nbr.first;
-                int cost=nbr.second;
-                
-                if(d+cost<dist[v]){
-                    dist[v]=d+cost;
-                    parent[v]=u;
-                    pq.push({d+cost,v});
-                }
+            // Skip processing if a cheaper path was already finalized
+            if(dist[u] < d){
+                continue;
             }
             
+            // Relax neighboring edges
+            for(auto& nbr: adj[u]){
+                int v = nbr.first;
+                int wt = nbr.second;
+                
+                if(dist[u] + wt < dist[v]){
+                    dist[v] = dist[u] + wt;
+                    parent[v] = u; // Record the path step
+                    pq.push({dist[v], v});
+                }
+            }
         }
-    }
+        
+        // Return {-1} if destination node V is unreachable
+        if(dist[V] == INT_MAX) return {-1};
 
-    vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
-        // Code here
-        vector<vector<p>>adj(n+1);// vertex belongs to [1,n]
-        for(int i=0;i<m;i++){
-            int u=edges[i][0];
-            int v=edges[i][1];
-            int w=edges[i][2];
+      //Build a shortest path from source to destination
+        vector<int> res;
+        int curr = V;
+        
+        // Backtrack path from destination node V back to source node 1
+        while(curr != -1){
+            res.push_back(curr);
+            curr = parent[curr];
+        }
+        
+        // Append total path weight to match the required platform formatting
+        res.push_back(dist[V]);
+        
+        // Reverse vector so it starts with [total_weight, source, ..., destination]
+        reverse(res.begin(), res.end());
+        return res;
+    }
+    
+    vector<int> shortestPath(int V, int E, vector<vector<int>>& edges) {
+        // Build the Adjacency List for 1-based node tracking
+        vector<vector<p>> adj(V + 1);
+        for(auto &e: edges){
+            int u = e[0];
+            int v = e[1];
+            int w = e[2];
             
-            adj[u].push_back({v,w});
-            adj[v].push_back({u,w});
+            adj[u].push_back({v, w});
+            adj[v].push_back({u, w});
         }
         
-        int src=1,dest=n;
-        vector<int>dist(n+1,INT_MAX);
-        vector<int>parent(n+1,-1);
-        dijkstra(adj,src,dist,parent);
-        
-        if(dist[dest]==INT_MAX) return {-1};
-        
-        vector<int>path;
-        int temp=dest;
-        
-        while(temp!= -1){
-            path.push_back(temp);
-            temp=parent[temp];
-        }
-        
-        //path.push_back(dist[dest]);//cost of path
-        reverse(path.begin(), path.end());
-        path.insert(path.begin(), dist[dest]);  // cost at front
-        
-        return path;
+        // Run Dijkstra with source = 1 and target = V
+        return dijkstra(1, V, adj);
     }
 };
