@@ -4,53 +4,58 @@ using namespace std;
 
 //Method-1 Using min_heap {TC=O(ElogV)}
 class Solution {
-  typedef pair<int,int>p;
-  public: 
-    void helper(vector<vector<pair<int,int>>>&adj,int src,vector<int>&dist){
+  public:
+    typedef pair<int,int> p;
+    
+    vector<int> solve(int src, int V, vector<vector<p>>& adj){
+        // Initialize all distances to infinity
+        vector<int> dist(V, INT_MAX);
         
-        dist[src]=0;
-        priority_queue<p,vector<p>,greater<p>>pq;//{dist,node}
-        pq.push({0,src}); //O(logV)
+        // Base case: distance to the source node is always 0
+        dist[src] = 0;
         
-        while(!pq.empty()){// Runs O(V + E) times total
-
-            //auto [d,u]=pq.top();//u->v
-
-            p curr=pq.top();//O(1)
-            int d=curr.first;
-            int u=curr.second;
-            pq.pop();// O(log E) which is effectively O(log V)
+        // Min-heap storing pairs of {distance, node}
+        priority_queue<p, vector<p>, greater<p>> pq;
+        pq.push({0, src});
+        
+        while(!pq.empty()){
+            auto [d, u] = pq.top();
+            pq.pop();
             
-            // CRITICAL: Skip stale entries to keep complexity at O(E log V)
-            // CRITICAL: Skip stale entries
-            if (d > dist[u]) continue;
+            // Skip processing if a shorter path to 'u' was already finalized
+            if(dist[u] < d){
+                continue;
+            }
             
-            for(auto &nbr:adj[u]){ // Total iterations across all while-loops = O(E)
-                int cost=nbr.second;
-                int  v=nbr.first;
-                if(d+cost<dist[v] ){
-                    dist[v]=d+cost;
-                    pq.push({d+cost,v});//O(logV)
+            // Traverse and relax all neighboring edges
+            for(auto& nbr: adj[u]){
+                int v = nbr.first;
+                int wt = nbr.second;
+                
+                // If a cheaper path to 'v' is discovered via 'u'
+                if(dist[u] + wt < dist[v]){
+                    dist[v] = dist[u] + wt;
+                    pq.push({dist[v], v});
                 }
             }
         }
-    }
-
-    vector<int> dijkstra(int V, vector<vector<int>> &edges, int src) {
-        // Code here
-        // Space: O(V + E) to store the graph
-        vector<vector<pair<int,int>>>adj(V);
-        for(auto  &edge:edges){ // TC: O(E)
-            int u=edge[0];
-            int v=edge[1];
-            int w=edge[2];
-            
-            adj[u].push_back({v,w});
-            adj[v].push_back({u,w});
-        }
-        vector<int>dist(V,INT_MAX);
-        helper(adj,src,dist);
         return dist;
+    }
+    
+    vector<int> dijkstra(int V, vector<vector<int>> &edges, int src) {
+        // Step 1: Build the Adjacency List for an undirected graph
+        vector<vector<p>> adj(V);
+        for(auto &e: edges){
+            int u = e[0];
+            int v = e[1];
+            int w = e[2];
+            
+            adj[u].push_back({v, w});
+            adj[v].push_back({u, w});
+        }
+        
+        // Step 2: Run Dijkstra's algorithm from the source node
+        return solve(src, V, adj);
     }
 };
 /*
