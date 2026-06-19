@@ -6,52 +6,61 @@ using namespace std;
 class Solution {
   public:
  //Method-1 :- Using BFS  ; TC- O(4*N*M); SC- O(N*M)
-    typedef pair<int,int>p;
-    vector<p>direction={{-1,0},{0,-1},{0,1},{1,0}};
+    // Direction vectors for moving: Down, Right, Up, Left
+    vector<vector<int>> dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    typedef pair<int, int> p;
     
-    int Bfs(vector<vector<int>>grid, pair<int,int>source, pair<int,int>destination){
-       
-        int N=grid.size();
-        int M=grid[0].size();
+    int bfs(vector<vector<int>> &mat, int n, int m, vector<int> &src, vector<int> &dest){
+        queue<p> q;
+        q.push({src[0], src[1]});
+        mat[src[0]][src[1]] = 0; // Mark source cell as visited
         
-        int srcX=source.first, srcY=source.second;
-        int tarX=destination.first, tarY=destination.second;
-
-        if(grid[srcX][srcY] == 0 || grid[tarX][tarY] == 0) return -1;// edge case
+        int level = 0;
         
-        queue<p>q;
-        q.push({srcX,srcY});
-        grid[srcX][srcY]=-1;
-        
-        int steps=0;
         while(!q.empty()){
-            int n=q.size();
-            while(n--){
-                p curr=q.front();
+            // Track the number of nodes at the current distance level
+            int N = q.size();
+            
+            while(N--){
+                auto [x, y] = q.front();
                 q.pop();
                 
-                int x=curr.first;
-                int y=curr.second;
+                // Return total moves if destination is reached
+                if(x == dest[0] && y == dest[1]){
+                    return level;
+                }
                 
-                if(x==tarX && y== tarY) return steps;
-                
-                for(auto &dirs:direction){
+                // Check all 4 adjacent neighbors
+                for(auto &d : dir){
+                    int nx = x + d[0];
+                    int ny = y + d[1];
                     
-                    int nx= x + dirs.first;
-                    int ny= y + dirs.second;
-                    
-                    if(nx>=0 && nx <N && ny>=0 && ny<M && grid[nx][ny]==1){
-                        
-                        grid[nx][ny]=-1;
-                        q.push({nx,ny});
+                    // Validate boundaries first, then check if path is unvisited (not 0)
+                    if(nx >= 0 && nx < n && ny >= 0 && ny < m && mat[nx][ny] != 0){
+                        q.push({nx, ny});
+                        mat[nx][ny] = 0; // Mark cell as visited immediately
                     }
-                    
                 }
             }
-            steps++;
+            level++; // Advance to the next wave/level of cells
         }
-        return -1;
+        return -1; // Destination unreachable
     }
+    
+    int shortestPath(vector<vector<int>> &mat, vector<int> &src, vector<int> &dest) {
+        int n = mat.size();
+        if(n == 0) return -1;
+        int m = mat[0].size();
+        
+        // Base Case: Verify matrix boundaries and ensure endpoints are unblocked
+        if(m == 0 || mat[src[0]][src[1]] != 1 || mat[dest[0]][dest[1]] != 1){
+             return -1;
+        }
+        
+        return bfs(mat, n, m, src, dest);
+    }
+
+
 
     //Method-2 using dist matrix + BFS
     typedef pair<int,int>p;
