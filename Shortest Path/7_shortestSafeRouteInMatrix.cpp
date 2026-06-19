@@ -4,68 +4,70 @@ using namespace std;
 
 class Solution {
   public:
-   vector<vector<int>> dirs = {{1,0},{-1,0},{0,1},{0,-1}};
-
+    vector<vector<int>> dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    typedef pair<int, int> p;
+    
     int findShortestPath(vector<vector<int>> &mat) {
         
-        int m = mat.size();
-        int n = mat[0].size();
+        int n = mat.size();
+        if (n == 0) return -1;
+        int m = mat[0].size();
         
-        // Step 1: Create a matrix to mark unsafe cells
-        vector<vector<bool>> unsafe(m, vector<bool>(n,false));
+        // Step 1: Pre-process the grid to find and mark cells adjacent to landmines
+        // We use a copy matrix (or temp marker) to prevent newly updated 0s from affecting checks
+        vector<vector<int>> validGrid = mat; 
         
-        // Mark landmines and their neighbors
-        for(int i = 0; i < m; i++){
-            for(int j = 0; j < n; j++){
-                if(mat[i][j] == 0){
-                    unsafe[i][j] = true;
-                    
-                    for(auto &d : dirs){
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (mat[i][j] == 0) { // If it's a landmine
+                    for (auto &d : dir) {
                         int ni = i + d[0];
                         int nj = j + d[1];
-                        
-                        if(ni>=0 && ni<m && nj>=0 && nj<n){
-                            unsafe[ni][nj] = true;
+                        if (ni >= 0 && ni < n && nj >= 0 && nj < m) {
+                            validGrid[ni][nj] = 0; // Mark neighbors unsafe
                         }
                     }
                 }
             }
         }
         
-        // Step 2: BFS
-        queue<pair<int,pair<int,int>>> q;
-        vector<vector<bool>> vis(m, vector<bool>(n,false));
-        
-        // Push valid starting cells (first column)
-        for(int i = 0; i < m; i++){
-            if(!unsafe[i][0] && mat[i][0] == 1){
-                q.push({0,{i,0}});
-                vis[i][0] = true;
+        // Step 2: Initialize Multi-Source BFS queue
+        queue<p> q;
+        for (int i = 0; i < n; i++) {
+            if (validGrid[i][0] == 1) {
+                q.push({i, 0});
+                validGrid[i][0] = 0; // Mark as visited
             }
         }
         
-        while(!q.empty()){
-            auto curr = q.front();
-            q.pop();
+        int level = 0;
+        
+        // Step 3: Run Single-Pass BFS
+        while (!q.empty()) {
+            int sz = q.size();
             
-            int dist = curr.first;
-            int x = curr.second.first;
-            int y = curr.second.second;
-            
-            if(y == n-1) return dist+1;//if we reach in any cell at last column
-            
-            for(auto &d : dirs){
-                int nx = x + d[0];
-                int ny = y + d[1];
+            while (sz--) {
+                auto [x, y] = q.front();
+                q.pop();
                 
-                if(nx>=0 && nx<m && ny>=0 && ny<n &&
-                   !unsafe[nx][ny] &&mat[nx][ny] == 1 &&!vis[nx][ny]){
+                // Fixed: If we reached any cell in the rightmost column, return exact level
+                if (y == m - 1) {
+                    return level+1;
+                }
+                
+                for (auto &d : dir) {
+                    int nx = x + d[0];
+                    int ny = y + d[1];
                     
-                    vis[nx][ny] = true;
-                    q.push({dist+1,{nx,ny}});
+                    if (nx >= 0 && nx < n && ny >= 0 && ny < m && validGrid[nx][ny] == 1) {
+                        q.push({nx, ny});
+                        validGrid[nx][ny] = 0; // Mark as visited
+                    }
                 }
             }
+            level++;
         }
-        return -1;
+        
+        return -1; // No safe path exists
     }
 };
