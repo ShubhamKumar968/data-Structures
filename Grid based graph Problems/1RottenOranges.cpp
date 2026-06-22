@@ -3,56 +3,66 @@ using namespace std;
 #include<bits/stdc++.h>
 
 // Time  & Space= O(m*n)
-class Solution {
-public:
-    typedef pair<int,int>p;
-    int helper(vector<vector<int>>& grid){
-        int m=grid.size();
-        int n=grid[0].size();
-        vector<vector<int>>directions={{1,0},{0,1},{-1,0},{0,-1}};
 
+class Solution {
+  public:
+    
+    typedef pair<int,int>p;
+    vector<vector<int>>dir={{-1,0},{0,-1},{1,0},{0,1}};
+    int bfs(vector<vector<int>>& mat){
+        
+        int m=mat.size();
+        int n=mat[0].size();
+
+        //Multiple sources are pushed into queue for each level tracking
         queue<p>q;
         int freshCount=0;
         for(int i=0;i<m;i++){
             for(int j=0;j<n;j++){
-                if(grid[i][j]==1) freshCount++;
-                else if(grid[i][j]==2) q.push({i,j}); // rotten orange acts as a source
+                if(mat[i][j]==2){
+                    q.push({i,j});// rotten orange acts as a source
+                }
+                if(mat[i][j]==1){
+                    freshCount++;
+                }
             }
         }
+        
         if(freshCount==0) return 0; // saare oranges already rotten hai
-
-        int minutes=0;
+       
+        int minutes=0;//At each level we increment it;
+        
         while(!q.empty()){
+            
+            bool isRotten=false;
             int N=q.size();
-            bool isProducedRotten=false;
+            
             while(N--){
-                //auto [x,y]=q.front();
-                pair<int,int>curr=q.front();
-                int x=curr.first, y=curr.second;
+            
+                auto[x,y]=q.front();
                 q.pop();
-
-                for(auto &dir: directions){
-                    int newX=x+dir[0];
-                    int newY=y+dir[1];
-
-                    if(newX>=0 && newX<m && newY>=0 && newY<n && grid[newX][newY]==1){
-                            grid[newX][newY]=2;
-                            freshCount--;
-                            q.push({newX,newY});
-                            isProducedRotten=true;
-
+                
+                for(auto & d:dir){
+                    
+                    int nx=x+d[0];
+                    int ny=y+d[1];
+                    
+                    if(nx>=0 && nx<m && ny>=0 && ny<n && mat[nx][ny]==1){
+                        mat[nx][ny]=2;
+                        q.push({nx,ny});
+                        isRotten=true;
+                        freshCount--;
                     }
                 }
             }
-            if(isProducedRotten==true){
-                minutes++;
-            }
+            if(isRotten==true) minutes++;
         }
-        return (freshCount==0) ? minutes : -1;// agar saare rotten hai to hi time return hoga
+        
+        return freshCount==0? minutes: -1; // agar saare rotten hai to hi time return hoga
+        
     }
-
-    int orangesRotting(vector<vector<int>>& grid) {
-           
-        return helper(grid);
+    int orangesRot(vector<vector<int>>& mat) {
+        // code here
+        return bfs(mat);
     }
 };
