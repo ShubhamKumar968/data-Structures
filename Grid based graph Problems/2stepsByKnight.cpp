@@ -17,40 +17,46 @@ class Solution {
     vector<int> dx={1,2,-1,-2,1,-2,-1,2};
     vector<int> dy={2,1,-2,-1,-2,1,2,-1};
     
-    int helper(vector<vector<int>>&chess,int srcX, int srcY, int tarX, int tarY, int n){
+    int bfs(vector<vector<int>>& mat,int srcX,int srcY,int tarX, int tarY, int n){
         
         queue<p>q;
+        
         q.push({srcX,srcY});
-        chess[srcX][srcY]=1;
-        int steps=0;
+        mat[srcX][srcY]=-1;
+        
+        int steps=0;//At each level we increment it;
         
         while(!q.empty()){
+            
             int N=q.size();
+            
             while(N--){
-                //auto [x,y]=q.front();
-                pair<int,int>curr=q.front();
-                int x=curr.first, y=curr.second;
+            
+                auto[x,y]=q.front();
                 q.pop();
                 
-                if(x==tarX && y==tarY) return steps;
+                if(x==tarX &&y==tarY){
+                    return steps;
+                }
                 
-                for(int k=0;k<8;k++){
+                for(int i=0;i<8;i++){
+                    int nx=x+dx[i];
+                    int ny=y+dy[i];
                     
-                    int newX=x+dx[k];
-                    int newY=y+dy[k];
-                    
-                    if(newX>=0 && newX <n && newY>=0 && newY<n && chess[newX][newY]==0){
-                           
-                           q.push({newX,newY});
-                           chess[newX][newY]=1;
+                    if(nx>=0 && nx<n && ny>=0 && ny<n && mat[nx][ny]!=-1 ){
+                        mat[nx][ny]=-1;
+                        q.push({nx,ny});
+                       
                     }
-                    
                 }
             }
             steps++;
         }
-        return -1;
+        
+        return steps; 
+        
     }
+    
     int minStepToReachTarget(vector<int>& knightPos, vector<int>& targetPos, int n) {
         // Code here
         int srcX=n-knightPos[0];
@@ -59,8 +65,7 @@ class Solution {
         int tarX=n-targetPos[0];
         int tarY=targetPos[1]-1;
         
-       vector<vector<int>>chess(n,vector<int>(n,0));
-       return helper(chess,srcX,srcY,tarX, tarY,n);
-       
+        vector<vector<int>>mat(n,vector<int>(n));
+        return bfs(mat,srcX,srcY,tarX,tarY,n);
     }
 };
