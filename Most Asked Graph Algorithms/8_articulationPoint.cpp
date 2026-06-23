@@ -89,7 +89,8 @@ class Solution {
     // Case 1: Non-root articulation condition {if(parent != -1 && low[nbr] >= disc[node])}
    // Case 2: Root articulation condition {if(parent == -1 && children > 1)}
   
-    void dfs(int node, vector<int> adj[], vector<int>& disc, vector<int>& low,
+    // Tarjan's DFS to find Articulation Points (Cut Vertices)
+    void dfs(int node, vector<vector<int>>&adj, vector<int>& disc, vector<int>& low,
     vector<bool>& vis, int parent, int& timer, vector<int>& articulationPoint) {
         
         vis[node] = true;
@@ -124,7 +125,22 @@ class Solution {
         return;
     }
 
-    vector<int> articulationPoints(int V, vector<int> adj[]) {
+    vector<int> articulationPoints(int V, vector<vector<int>>& edges) {
+        
+        
+        // Step 1: Build the undirected adjacency list
+        vector<vector<int>>adj(V);
+        
+        for(auto &e: edges){
+            int u=e[0];
+            int v=e[1];
+            
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        
+        
+        // Step 2: Initialize Tarjan's data structures
         vector<int> disc(V, 0);
         vector<int> low(V, 0);
         vector<bool> vis(V, false);
@@ -132,14 +148,14 @@ class Solution {
         int timer = 0;
         int parent = -1;
         
-        // Run DFS for all unvisited nodes to handle disconnected components
+        // Step 3: Run DFS for all components of the graph
         for (int i = 0; i < V; i++) {
             if (!vis[i]) {
                 dfs(i, adj, disc, low, vis, parent, timer, articulationPoint);
             }
         }
         
-        // Collect identified articulation points in increasing order
+        // Step 4: Collect identified articulation points in increasing order
         vector<int> res;
         for (int i = 0; i < V; i++) {
             if (articulationPoint[i] == 1) {
