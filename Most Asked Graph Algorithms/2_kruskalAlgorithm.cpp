@@ -4,20 +4,24 @@ using namespace std;
 
 
 //TC= O(ElogE + E)
-class DSU {
+
+class DSU {//DSU by rank
   public:
     vector<int> parent;
     vector<int> rank;
     
     DSU(int V) {
+      
         parent.resize(V);
-        rank.resize(V, 1);
+        rank.resize(V, 0);
+      
         for(int i = 0; i < V; i++) {
             parent[i] = i; // Every node is initially its own parent
         }
     }
     
     int find(int x) {
+      
         if(x == parent[x]) {
             return x;
         }
