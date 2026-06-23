@@ -8,65 +8,71 @@ using namespace std;
 //Low[node]=Agar mai iss node se DFS tree ya back-edge ke through upar ja sakta hoon, to sabse chhota disc time kya hai?
 
 class Solution {
-public:
-    // jab kisi edge ko hatane se graph disconnect ho jaye to wah edge bridge hota hai;
-    //Note:- pass parent by value not by reference.
-    void dfs(vector<vector<int>>&adj,int node,int parent, vector<bool>&vis,
-            vector<int>&disc,vector<int>&low,int &timer,vector<vector<int>>&bridges,bool foundBridge){
-
-        disc[node]=low[node]=timer++;
+  public:
+  
+   // jab kisi edge ko hatane se graph disconnect ho jaye to wah edge bridge hota hai;
+bool dfs(int node,vector<vector<int>>&adj,vector<int>&disc,vector<int>&low, vector<bool>&vis,int parent,int& timer,int u, int v){
+        
         vis[node]=true;
+        disc[node]=low[node]=timer++; // Assign discovery time and initialize low value
+        
         for(auto &nbr:adj[node]){
-
-            if(nbr==parent) continue;// Cycle is not there
-
-            else if(vis[nbr]==true && nbr!=parent){//Cycle is there; {Back-edge is present: Update low value of current node}
-               low[node]=min(low[node],disc[nbr]);
-
-            }else if(!vis[nbr]){//A bridge is an edge that is not part of any cycle.
-
-                dfs(adj,nbr,node,vis,disc,low,timer,bridges,foundBridge);
-                //On backtrack, update low value from child or its neighbor
-
+            
+            if(!vis[nbr]){
+                // Recur for unvisited neighbor
+                if(dfs(nbr,adj,disc,low,vis,node,timer,u,v)){
+                    return true;
+                }
+                
+                // On tree unraveling, update low value of current node
                 low[node]=min(low[node],low[nbr]);
-                //check if bridge edge exist or not
-
-                if(low[nbr]>disc[node]){//Bridge condition {means there is no back edge forming a cycle.}
-                    
-                    foundBridge = true;
-                    bridges.push_back({node,nbr});
+                
+                // Bridge condition: Neighbor has no back-edge to an ancestor
+                if(low[nbr]>disc[node]){
+                    // Check if the identified bridge matches the target edge (u, v)
+                    if ((u == node && v == nbr) || (u == nbr && v == node)){
+                        return true;
+                    }
                 }
             }
-
+            else if(vis[nbr] && nbr!=parent){// Cycle or Back-edge found
+                
+                // Update low value using discovery time of the ancestor
+                low[node]=min(low[node],disc[nbr]);
+            }
         }
-        return;
+        
+        return false;
     }
-     
-    vector<vector<int>> criticalConnections(int V, vector<vector<int>>& connections){
-    
-        vector<vector<int>>adj(V);
-        for(auto &edge:connections){
-            int u=edge[0];
-            int v=edge[1];
 
+    bool isBridge(int V, vector<vector<int>> &edges, int c, int d) {
+        // Step 1: Build the undirected adjacency list
+        vector<vector<int>>adj(V);
+        
+        for(auto &e: edges){
+            int u=e[0];
+            int v=e[1];
+            
             adj[u].push_back(v);
             adj[v].push_back(u);
         }
-
-        bool foundBridge = false;
+        
+        // Step 2: Initialize Tarjan's data structures
+        vector<int>disc(V,0);
+        vector<int>low(V,0);
         vector<bool>vis(V,false);
-        vector<int>disc(V,-1);
-        vector<int>low(V,-1);
-        vector<vector<int>>bridges;
+        vector<vector<int>>res;
         int timer=0;
-
-       // To Handle disconnected or multiple components
-        for (int i = 0; i < V; i++) {
-            if (!vis[i]) {
-                dfs(adj, i, -1, vis, disc, low, timer, bridges,foundBridge);
+        int parent=-1;
+        
+        // Step 3: Run DFS for all components of the graph
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                if(dfs(i,adj,disc,low,vis,parent,timer,c,d)) return true;
             }
         }
-        return bridges;
+        
+        return false;
     }
 };
 
