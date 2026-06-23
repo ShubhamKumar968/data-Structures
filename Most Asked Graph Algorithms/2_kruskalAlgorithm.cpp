@@ -4,77 +4,78 @@ using namespace std;
 
 
 //TC= O(ElogE + E)
-class DSU{
-    public:
-     vector<int>par;
-     vector<int>rank;
+class DSU {
+  public:
+    vector<int> parent;
+    vector<int> rank;
     
-    DSU(int n){
-        rank.resize(n,0);
-        par.resize(n);
-        for(int i=0;i<n;i++) par[i]=i;
-    }
-    
-    int find(int x){
-        if(x==par[x]) return x;
-        return par[x]=find(par[x]);
-    }
-    void Union(int x,int y){
-        int x_par=find(x);
-        int y_par=find(y);
-        
-        if(x_par==y_par) return;
-        
-        if(rank[x_par]>rank[y_par]){
-            par[y_par]=x_par;
+    DSU(int V) {
+        parent.resize(V);
+        rank.resize(V, 1);
+        for(int i = 0; i < V; i++) {
+            parent[i] = i; // Every node is initially its own parent
         }
-        else if(rank[x_par]<rank[y_par]){
-            par[x_par]=y_par;
-        }else{
-            par[y_par]=x_par;
-            rank[x_par]++;
+    }
+    
+    int find(int x) {
+        if(x == parent[x]) {
+            return x;
+        }
+        return parent[x] = find(parent[x]); // Path compression for O(1) amortized lookup
+    }
+    
+    //Rank only increases when you merge two trees 
+    //that have the exact same rank.because height doesn't change.
+    
+    void Union(int x, int y) {
+        
+        int x_par = find(x);
+        int y_par = find(y);
+        
+        if(x_par == y_par) {
+            return; // Already in the same component
+        }
+        
+        // Union by rank: Attach smaller depth tree under larger depth tree
+        if(rank[x_par] > rank[y_par]) {
+            parent[y_par] = x_par;
+        }
+        else if(rank[y_par] > rank[x_par]) {
+            parent[x_par] = y_par;
+        }
+        else {
+            parent[x_par] = y_par;
+            rank[y_par]++; // Rank only increases when joining trees of equal rank
         }
     }
 };
 
 class Solution {
   public:
-    int kruskal(vector<vector<int>>& edges, int V){
+    // Kruskal's Algorithm to find Minimum Spanning Tree (MST) weight
+    int kruskalsMST(int V, vector<vector<int>> &edges) {
         
-        DSU dsu(V);// constructor call for dsu
-        int cost=0;
+        // Step 1: Sort edges in ascending order by weight (index 2)
+        sort(edges.begin(), edges.end(), [](auto & a, auto & b) {
+            return a[2] < b[2]; 
+        });
         
-        for(auto &edge:edges){// O(E* 4*alpha)
+        DSU dsu(V);
+        int sum = 0;
+        
+        // Step 2: Iterate through sorted edges and dynamically build MST
+        for(auto &e : edges) {
+            int u = e[0];
+            int v = e[1];
+            int wt = e[2];
             
-            int u=edge[0];
-            int v=edge[1];
-            int wt=edge[2];
-            
-            int u_par=dsu.find(u);
-            int v_par=dsu.find(v);
-            
-            if(u_par != v_par){ // agar same componet me nhi hai to mst me include karenge union se.
-                dsu.Union(u,v);
-                cost+=wt;
+            // If u and v belong to different sets, no cycle is formed
+            if(dsu.find(u) != dsu.find(v)) {
+                dsu.Union(u, v); // Merge components
+                sum += wt;       // Add edge weight to total MST cost
             }
         }
-        return cost;
-    }
-    
-    int spanningTree(int V, vector<vector<int>>& edges) {
-        // code here
         
-       // step-1: here in kruskal , we processes the edge;
-       // by sorting edge according to weight
-       
-       auto comparator=[&](vector<int>&v1,vector<int>&v2){
-            return v1[2]<v2[2];//small weight will come first;
-       };
-       sort(edges.begin(),edges.end(),comparator);//O(ElogE)
-       
-       //step-2: start processing from smallest edge using kruskal using dsu
-       
-       return kruskal(edges,V);
+        return sum;
     }
-    
 };
