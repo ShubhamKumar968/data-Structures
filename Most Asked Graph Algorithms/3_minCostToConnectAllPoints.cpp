@@ -2,81 +2,107 @@
 using namespace std;
 #include<bits/stdc++.h>
 //Method-1 Using Kruskal Algo {TC=O(V^2*Log(V))}
-class DSU{
-    public:
-     vector<int>par;
-     vector<int>rank;
 
-    DSU(int n){
-        rank.resize(n,0);
-        par.resize(n);
-        for(int i=0;i<n;i++) par[i]=i;
-
+class DSU {//DSU by size
+  public:
+    vector<int> parent;
+    vector<int> size;
+    
+    DSU(int V) {
+        
+        parent.resize(V);
+        size.resize(V, 1);
+        
+        for(int i = 0; i < V; i++) {
+            parent[i] = i; // Every node is initially its own parent
+        }
     }
-
-    int find(int x){
-        if(x==par[x]) return x;
-        return par[x]=find(par[x]);
+    
+    int find(int x) {
+        
+        if(x == parent[x]) {
+            return x;
+        }
+        return parent[x] = find(parent[x]); // Path compression for O(1) amortized lookup
     }
-
-    void Union(int x,int y){
-        int x_par=find(x);
-        int y_par=find(y);
-
-        if(x_par==y_par) return;
-
-        if(rank[x_par]>rank[y_par]){
-            par[y_par]=x_par;
-        }else if(rank[x_par]<rank[y_par]){
-            par[x_par]=y_par;
-        }else{
-            par[x_par]=y_par;
-            rank[y_par]++;
+    
+    //Rank only increases when you merge two trees 
+    //that have the exact same rank.because height doesn't change.
+    
+    void Union(int x, int y) {
+        
+        int x_par = find(x);
+        int y_par = find(y);
+        
+        if(x_par == y_par) {
+            return; // Already in the same component
+        }
+        
+        // Union by Size: Jiska size bada hai wo parent banega, aur jo parent banega uska size  hi badhega
+        if(size[x_par] > size[y_par]) {
+            
+            parent[y_par] = x_par;
+            size[x_par]+=size[y_par];
+        }
+        else if(size[y_par] > size[x_par]) {
+            parent[x_par] = y_par;
+            size[y_par]+=size[x_par];
+        }
+        else {
+            
+            parent[x_par] = y_par;
+            size[y_par]+=size[x_par];
+            
         }
     }
 };
+
 
 class Solution {
-public:
-    int kruskal(vector<tuple<int,int,int>>& edges,int V){
-        int cost=0,edgesUsed=0;
-        DSU dsu(V);
-        for(auto &[wt, u, v] : edges){
-            if(dsu.find(u) != dsu.find(v)){
-                dsu.Union(u, v);
-                cost += wt;
-                edgesUsed++;
-                if(edgesUsed == V-1) break; // important optimization
-            }
-        }
-        return cost;
-    }
+  public:
 
-    int minCostConnectPoints(vector<vector<int>>& points) {
+    int minCost(vector<vector<int>>& houses) {
+        int V = houses.size(); 
         
-        int V=points.size();
-        //step-1: create a vector of edges
-        vector<tuple<int,int,int>> edges;
-        for(int i=0;i<V;i++){
-            for(int j=i+1;j<V;j++){
-                int x1=points[i][0];
-                int y1=points[i][1];
-
-                int x2=points[j][0];
-                int y2=points[j][1];
-                
-                int wt= abs(x1-x2) +abs(y1-y2);
-                edges.push_back({wt, i, j});//because in undirected both directions will have same weight
+        // FIXED: Generate all possible pairwise edges since the input only contains coordinates
+        vector<vector<int>> edges;
+        for (int i = 0; i < V; i++) {
+            for (int j = i + 1; j < V; j++) {
+                // Calculate Manhattan Distance: |xi - xj| + |yi - yj|
+                int cost = abs(houses[i][0] - houses[j][0]) + abs(houses[i][1] - houses[j][1]);
+                edges.push_back({i, j, cost});
             }
         }
-        //step-2:sort the edges by weight
-        sort(edges.begin(), edges.end());
-
-        //step-3:apply kruskal algo to find minimum cost;
-        return kruskal(edges,V);
+        
+        // Step 1: Sort the generated edges array in ascending order by weight (index 2)
+        sort(edges.begin(), edges.end(), [](auto & a, auto & b) {
+            return a[2] < b[2]; 
+        });
+        
+        
+        DSU dsu(V);
+        int sum = 0;
+        
+        // Step 2: Iterate through sorted edges and dynamically build MST
+        for(auto &e : edges) {
+            
+            int u = e[0];
+            int v = e[1];
+            int wt = e[2];
+            
+            // If u and v belong to different sets, no cycle is formed
+            if(dsu.find(u) != dsu.find(v)) {
+                dsu.Union(u, v); // Merge components
+                sum += wt;       // Add edge weight to total MST cost
+            }
+        }
+        
+        return sum;
     }
-
 };
+
+
+
 //Method-2 Using prim Algo {TC=O(V^2)}
 class Solution {
 public:
