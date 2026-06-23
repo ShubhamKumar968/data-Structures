@@ -16,70 +16,74 @@ class Solution {
 //5.Time complexity: O(V + E)
 //6.Space complexity: O(V+E)
 
-    void dfs(int node,vector<vector<int>>&adjRev,vector<bool>&visited,vector<int>& component){
-        
-        visited[node]=true;
-        component.push_back(node);
-      
-        for(auto &nbr:adjRev[node]){
-            if(!visited[nbr]){
-                dfs(nbr,adjRev,visited,component);
-            }
-        }
-    }
-    
-    void topoOrder(int node,vector<vector<int>> &adj,vector<bool>&vis,stack<int>&st){
+   void topoSort(vector<vector<int>>&adj,int node,stack<int>&st,vector<bool>&vis){
         
         vis[node]=true;
-        for(auto &nbr:adj[node]){//Pahle mere children ko dalo
+        for(auto &nbr:adj[node]){
             if(!vis[nbr]){
-                topoOrder(nbr,adj,vis,st);
+                topoSort(adj,nbr,st,vis);
             }
         }
-        st.push(node);//phir mujhe last me dalo
+        st.push(node);
+        return;
     }
-    //Always Applicable in a directed graph
-    int kosaraju(vector<vector<int>> &adj) {
+    
+    void dfs(int node,vector<vector<int>>&adjRev,vector<bool>&visited){
         
-        //Step-1: find topological order by apply dfs on the graph
-        int V=adj.size();
+        visited[node]=true;
+        for(auto &nbr:adjRev[node]){
+            if(!visited[nbr]){
+                dfs(nbr,adjRev,visited);
+            }
+        }
+        return;
+    }
+    //Always possible for  DAG only
+    int kosaraju(int V, vector<vector<int>> &edges) {
+       
+         // Step 1: Build the undirected adjacency list
+        vector<vector<int>>adj(V);
+        
+        for(auto &e: edges){
+            int u=e[0];
+            int v=e[1];
+            
+            adj[u].push_back(v);
+        }
+        
+        //Step 2: Find Topological order of nodes
         stack<int>st;
         vector<bool>vis(V,false);
         
-        for(int i=0;i<V;i++){//To handle multiple component
+        for(int i=0;i<V;i++){
             if(!vis[i]){
-                topoOrder(i,adj,vis,st);
+                topoSort(adj,i,st,vis);
             }
         }
-        
-        //step-2: reverse the graph
+       //Step 3: Find Transpose of the graph (reverse of graph)
+       
         vector<vector<int>>adjRev(V);
-        for(int u=0;u<V;u++){//u->v
-            for(auto &v:adj[u]){
-                //Reverse the edges of the graph
-                adjRev[v].push_back(u);//v->u
-            }
+        
+        for(auto &e: edges){
+            int u=e[0];
+            int v=e[1];
+            //By  reversing the edges
+            adjRev[v].push_back(u);
         }
         
-        //Step-3: Apply dfs on topological (stack) order on the reversed Graph to find SCC
-        vector<vector<int>>allSCC;
-        int stronglyComponent=0;
+        //Step 4: Apply dfs in topological order
+        int components=0;
         vector<bool>visited(V,false);
         
         while(!st.empty()){
             int node=st.top();
             st.pop();
             
-            if(!visited[node]){
-                vector<int>component;
-                dfs(node,adjRev,visited,component);
-                allSCC.push_back(component);
-                stronglyComponent++;
-            }
+           if(!visited[node]){
+               dfs(node,adjRev,visited);
+               components++;
+           } 
+            
         }
-        
-        return stronglyComponent;
-        //return allSCC;
+        return components;
     }
-
-};
