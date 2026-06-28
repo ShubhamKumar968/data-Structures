@@ -41,32 +41,52 @@ class Solution {
             j++;
         }
         return res;
+    }
+};
+
 
 //Method-3 Optimal O(n) using monotonic decresing dequqe
-        int n=arr.size();
-        deque<int>dq;
+      class Solution {
+  public:
+    vector<int> maxOfSubarrays(vector<int>& arr, int k) {
+        
         vector<int>res;
-        for(int i=0;i<n;i++){
+        deque<int>dq;
+        int n=arr.size();
+        
+        int i=0,j=0;
+        
+        while(j<n){
             
-            // Remove elements out of the current window
-            while(!dq.empty() && dq.front() <= i-k){
-                dq.pop_front();
+           //Step-1: Remove all indices of elements that are smaller than the current element arr[j]
+            while (!dq.empty() && arr[dq.back()] <= arr[j]) {
+                dq.pop_back();
             }
             
-            // Remove smaller elements from back
-            while(!dq.empty() && arr[dq.back()]<arr[i]){
-                 dq.pop_back();//We want decreasing
-            }
-    
-            dq.push_back(i);//maintain decreasing order
+            // Step 2: Add the current element's index to the back
+            dq.push_back(j);
             
-            if(i>=k-1){//Now we will be getting k-sized window
-                  res.push_back(arr[dq.front()]);
+            // Step 3: Check if we have hit the window size 'k'
+            if (j - i + 1 == k) {
+                // The front of the deque always holds the index of the maximum element
+                res.push_back(arr[dq.front()]);
+                
+                // Step 4: Slide the window forward, If the element at index 'i' is the one leaving the window, remove it from deque
+                if (dq.front() == i) {
+                    dq.pop_front();
+                }
+                
+                // Move the left pointer forward
+                i++;
             }
+                
+            j++;
         }
+        
         return res;
     }
 };
+
 //“Deque is used because it allows O(1) insertion and deletion from both ends,
 // enabling us to maintain a decreasing sequence and efficiently track the maximum in each sliding window.”
 
