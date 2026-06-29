@@ -76,7 +76,39 @@ public:
     }
 };
 
-//(3).Find all possible paths from top to bottom
+//(3) Count distinct path between 2 vertices in the DAG
+class Solution {
+  public:
+    // Function to count paths between two vertices in a directed graph.
+    void dfs(int src, vector<int> adj[], vector<bool>&vis, int& res, int dest  ){
+        
+        vis[src]=true;
+
+        if(src==dest){
+            res++;
+        }
+
+        for(auto &nbr:adj[src]){
+           if(!vis[nbr]) dfs(nbr,adj,vis,res,dest);
+        }
+
+        vis[src]=false;
+
+        return;
+    }
+    
+    int countPaths(int V, vector<int> adj[], int source, int destination) {
+        // Code here
+       
+        vector<bool>vis(V,false);
+        int res=0;
+        dfs(source,adj,vis,res,destination);
+        return res;
+    }
+};
+
+
+//(4).Find all possible paths from top to bottom
 //Given a n x m matrix mat[][]. Your task is to find and return all possible paths from the top-left cell (0, 0) to the bottom-right cell (n-1, m-1).
 
 class Solution {
@@ -116,7 +148,7 @@ class Solution {
 };
 
 
-//(4)Count all distinct path from top left (0,0) to bottom right (m-1,n-1).
+//(5)Count all distinct path from top left (0,0) to bottom right (m-1,n-1).
 
 class Solution {
   public:
