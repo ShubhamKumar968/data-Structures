@@ -33,37 +33,41 @@ public:
 
 //(2)maximum number of vowels in substring of length k;
 
-    bool isVowel(char &ch){
-       return ch=='a'||ch=='e'||ch=='i'||ch=='o'||ch=='u';
+class Solution {
+public:
+    bool isVowel(char ch){
+        return ch=='a'||ch=='e'||ch=='i'||ch=='o'|| ch=='u';
     }
-
     int maxVowels(string s, int k) {
-
-        int n=s.length();
-        int i=0,j=0,maxi=0,cnt=0;
-
-        //lambda is similar to above function
-        auto isVowel=[&](char ch){
-            return ch=='a'||ch=='e'||ch=='i'||ch=='o'||ch=='u';
-        };
         
+        int n=s.length();
+        int cnt=0;
+        int res=0;
+
+        int i=0,j=0;
+
         while(j<n){
             
             if(isVowel(s[j])){
                 cnt++;
             }
+
             if(j-i+1==k){
-                maxi=max(maxi,cnt);
+                res=max(res,cnt);
+
                 if(isVowel(s[i])){
                     cnt--;
-                   
                 }
-                 i++;
+
+                i++;
             }
+
             j++;
         }
-        return maxi;
+
+        return res;
     }
+};
 
 //(3) frequency of the most frequent element
 
