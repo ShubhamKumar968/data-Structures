@@ -114,3 +114,57 @@ class Solution {
         return res;
     }
 };
+
+
+//(4)Count all distinct path from top left (0,0) to bottom right (m-1,n-1).
+
+class Solution {
+  public:
+    
+    int t[101][101];
+    int solve(int m, int n, int i, int j){
+        
+        if(i==m-1 && j==n-1) return 1;
+        if(i<0 || i>=m || j<0 || j>=n ){
+            return 0;
+        }
+        
+        if(t[i][j]!=-1){
+            return t[i][j];
+        }
+        
+        
+        int down=solve(m,n,i+1,j);
+        int right=solve(m,n,i,j+1);
+        
+        return t[i][j]=(down+right);
+        
+    }
+    
+    int bottomUp(vector<vector<int>>&grid, int m, int n){
+        
+        vector<vector<int>>t(m,vector<int>(n,0));
+        t[0][0]=1;// Base case: There is 1 way to be at the starting cell
+        
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if (i == 0 && j == 0) continue;
+                int fromTop = (i > 0) ? t[i-1][j] : 0;
+                int fromLeft = (j > 0) ? t[i][j-1] : 0;
+            
+                t[i][j] = fromTop + fromLeft;
+                
+            }
+        }
+        
+        return t[m-1][n-1];
+    }
+    
+    int numberOfPaths(int m, int n) {
+        // code here
+        
+        memset(t,-1,sizeof(t));
+        return solve(m,n,0,0);
+        //return bottomUp(grid,m,n);
+    }
+};
