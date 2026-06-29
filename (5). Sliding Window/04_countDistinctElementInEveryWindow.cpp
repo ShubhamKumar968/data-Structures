@@ -10,14 +10,15 @@ class Solution {
 //Method-1: Brute force 
         int n=arr.size();
         vector<int>res;
-        for(int i=0;i<=n-k;i++){
+        for(int i=0;i+k<=n;i++){
             unordered_set<int>st;
             
             for(int j=i;j<i+k;j++){
-                if(st.find(arr[j]) != st.end()){
-                    continue;
+              
+                if(!st.count(arr[j])){
+                    st.insert(arr[j]);
                 }
-                st.insert(arr[j]);
+                
             }
             res.push_back(st.size());
         }
