@@ -70,28 +70,37 @@ class Solution {
             }
         }
         return cnt;    
+    }
+
 
 //Method -02 Optimal (map + prefixSum)
     
+       int subCount(vector<int>& arr, int k) {
+        
         int n=arr.size();
+        unordered_map<int,int>mp;
         int cnt=0;
         long long preSum=0;
-        unordered_map<int,int>mp;
-        mp[0]=1;
+        mp[0]=1;//for preSum=0
         
-        for(int i=0;i<n;i++){
+        int j=0;
+        while(j<n){
             
-            preSum +=arr[i];
-            //take remainder
-            int rem = preSum % k;
-           // handle negative remainder
-            if(rem < 0) rem += k;
+            preSum += arr[j];
+            
+            int rem= preSum%k; //take remainder
+            if(rem<0) rem+=k;// handle negative remainder
             
             if(mp.count(rem)){
-                cnt+=mp[rem]; // add all previous occurrences
+                cnt+= mp[rem];// add all previous occurrences
             }
+            
             mp[rem]++;
+            
+            j++;
         }
+        
         return cnt;
     }
+      
 };
