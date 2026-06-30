@@ -22,29 +22,36 @@ class Solution {
             }
         }
         return len; 
-        
+    }
+
+
     //Method-2 Optimal (Treat 0 as -1 and 1 as +1 => if sum = 0 then equal 0 & 1 is there )
-        int n = arr.size();
-        unordered_map<int,int> mp; // prefixSum -> first index
-        int preSum = 0, maxLen = 0;
-    
-        mp[0] = -1; // base case: sum 0 before array starts
-    
-        for (int i = 0; i < n; i++) {
+         int maxLen(vector<int> &arr) {
+        
+        int n=arr.size();
+        int maxLen=0;
+        int preSum=0;
+        unordered_map<int,int>mp;
+        mp[0]=-1;// for length=0
+        
+        int j=0;
+        while(j<n){
             
-            preSum += (arr[i] == 0) ? -1 : 1;
-    
-             if (mp.count(preSum)) {
-                maxLen = max(maxLen, i - mp[preSum]);
-            } 
+            //Treat 0 as -1 and 1 as 1
+            arr[j]==0 ? preSum+= -1 : preSum+=arr[j];
             
-            if (!mp.count(preSum)) {
-                mp[preSum] = i;
+            if(mp.count(preSum)){
+                maxLen=max(maxLen,j-mp[preSum]);
             }
+            else{
+                mp[preSum]=j;
+            }
+            
+            j++;
         }
-    
         return maxLen;
     }
+
 };
 
 //(2). count subarray with equal number of 0 and 1
