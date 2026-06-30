@@ -5,9 +5,8 @@ using namespace std;
 //(1) count subarray with sum equals to k
 class Solution {
   public:
-    int cntSubarrays(vector<int> &arr, int k) {
-        // code here
-        
+  int cntSubarrays(vector<int> &arr, int k) {
+    
 //Method-01 Brute force
     int n=arr.size();
     int cnt=0;
@@ -22,34 +21,40 @@ class Solution {
         }
     }
     return cnt;
-        
+  }
+
 //Method-02 optimal (preSum + map)        
-       int n=arr.size();
-       unordered_map<int,int>mp;
+      int cntSubarrays(vector<int> &arr, int k) {
        
-       int preSum=0;
-       int cnt=0;
-       for(int i=0;i<n;i++){
-           preSum+=arr[i];
-           
-           if(preSum==k){
-               cnt++;
-           }
-           if(mp.count(preSum - k)){
-               cnt+=mp[preSum-k];
-           }
-           mp[preSum]++;
-       }
-       return cnt; 
+        int n=arr.size();
+        unordered_map<int,int>mp;
+        int cnt=0;
+        int preSum=0;
+        mp[0]=1;//for preSum=0
+        
+        int j=0;
+        while(j<n){
+            
+            preSum+= arr[j];
+            
+            if(mp.count(preSum-k)){
+                cnt+= mp[preSum-k];
+            }
+            
+            mp[preSum]++;
+            
+            j++;
+        }
+        
+        return cnt;
     }
+
 };
 
+
 //(2) longest subarray with sum equals to k
-class Solution {
-  public:
     int longestSubarray(vector<int>& arr, int k) {
-        // code here
-        
+       
     //Method-1 Brute force
         int n=arr.size();
         int len=0;
@@ -64,24 +69,36 @@ class Solution {
             }
         }
         return len; 
+    }
+
     //Method-2 Optimal
-        int n=arr.size();
-        int len=0,preSum=0;
+
+   class Solution {
+  public:
+    int longestSubarray(vector<int>& arr, int k) {
         
+        int n=arr.size();
         unordered_map<int,int>mp;
+        
+        int maxLen=0;
+        int preSum=0;
+        int j=0;
         mp[0]=-1;
-        for(int i=0;i<n;i++){
-            preSum+=arr[i];
+        
+        while(j<n){
+            
+            preSum+=arr[j];
             
             if(mp.count(preSum-k)){
-                len=max(len, i- mp[preSum-k]);
+                maxLen=max(maxLen, j-mp[preSum-k]);
             }
             
             if(!mp.count(preSum)){// store only first occurrence
-                mp[preSum] = i;
+                mp[preSum] = j;
             }
+            
+            j++;
         }
-        return len;
-        
+        return maxLen;
     }
 };
