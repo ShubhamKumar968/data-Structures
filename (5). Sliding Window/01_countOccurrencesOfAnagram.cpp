@@ -30,40 +30,60 @@ class Solution {
             if (window == mp) cnt++;
         }
         return cnt; 
-        
+    }
+
+
 //Method-02: Optimal (Using Sliding Window)
 
-        int n=txt.length(), m=pat.length();
-        unordered_map<char,int>mp;
-        for(int i=0;i<m;i++){
-            mp[pat[i]]++;
+        int search(string &pat, string &txt) {
+        int n = txt.size();
+        int m = pat.size();
+        
+        if (m > n) return 0;
+        
+        unordered_map<char, int> mp;
+        for (auto &ch : pat) {
+            mp[ch]++;
         }
         
-        int i=0,j=0;
-        int cnt=0, length=mp.size();
-        while(j<n){
-            
-            if(mp.count(txt[j])){
+        int size = mp.size();
+        int i = 0, j = 0;
+        int ans = 0;
+        
+        while (j < n) {
+            // 1. Expand the window at 'j'
+            if (mp.count(txt[j])) {
                 mp[txt[j]]--;
-                if(mp[txt[j]]==0) length--;
+                if (mp[txt[j]] == 0) {
+                    size--;
+                }
             }
             
-            if(j-i+1==m){
-                
-                if(length==0) cnt++;//anagram found
-                
-                if(mp.count(txt[i])){
-                    if(mp[txt[i]] == 0) length++;
-                    mp[txt[i]]++;
+            // 2. When the window size reaches 'm'
+            if (j - i + 1 == m) {
+                // If all unique character counts are satisfied
+                if (size == 0) {
+                    ans++;
                 }
                 
+                // 3. Shrink the window from 'i'
+                if (mp.count(txt[i])) {
+                    // Only increment size if this character was perfectly matched (0)
+                    // and is now becoming deficient (1)
+                    if (mp[txt[i]] == 0) {
+                        size++;
+                    }
+                    mp[txt[i]]++;
+                }
                 i++;
             }
             
             j++;
         }
-        return cnt;
+        
+        return ans;
     }
+      
 };
 
 //Q.(2) find all anagrams of given string
