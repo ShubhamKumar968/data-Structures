@@ -33,32 +33,38 @@ class Solution {
             res=max(res,cnt);
         }
         return res;        
-        
+    }
+};
         
 //Method-2: Optimal
-        int n=arr.size();
-        int zero=0,cnt=0;
-        int i=0,j=0;
+
+ class Solution {
+public:
+    int maxOnes(vector<int>& arr, int k) {
+        int n = arr.size();
+        int i = 0, j = 0;
         
-        while(j<n){
-            
-            if(arr[j]==0){
+        int cnt = 0, zero = 0;
+        
+        while (j < n) {
+            // FIX: Check the incoming element at the right pointer 'j'
+            if (arr[j] == 0) {
                 zero++;
             }
             
-            while(i<=j && zero>k){
-                if(arr[i]==0){
+            // Shrink the window from the left if we have flipped more than 'k' zeros
+            while (zero > k) {
+                if (arr[i] == 0) {
                     zero--;
                 }
                 i++;
             }
             
-            cnt=max(cnt,j-i+1);
-            
-           j++;
+            // The window from i to j is now guaranteed to have at most 'k' zeros
+            cnt = max(cnt, j - i + 1);
+            j++;
         }
         
         return cnt;
     }
 };
- 
