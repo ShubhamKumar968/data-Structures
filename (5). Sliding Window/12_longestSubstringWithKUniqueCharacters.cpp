@@ -22,33 +22,41 @@ class Solution {
             }
         }
         return maxi;       
+    }
+
+//method-02 Optimal Using sliding window 
+
+       int longestKSubstr(string &s, int k) {
         
-//method-02 Optimal Using sliding window
-        int n=s.length();
-        int maxLen=-1;
-        unordered_map<char,int>mp;
-        int i=0,j=0;
+        int n = s.length();
+        int i = 0, j = 0;
+        int maxLen = -1;
         
-        while(j<n){
+        // Hash map tracks the frequency of characters inside the active window
+        unordered_map<char, int> mp;
+        
+        while (j < n) {
             
+            // 1. Expand phase: Add the incoming character to the window
             mp[s[j]]++;
             
-            while(mp.size()>k){
-                
+            // 2. Shrink phase: If unique character count exceeds k, slide left boundary
+            while (mp.size() > k) {
                 mp[s[i]]--;
-                
-                if(mp[s[i]]==0){
-                    mp.erase(s[i]);
+                if (mp[s[i]] == 0) {
+                    mp.erase(s[i]); // Physically remove the key to correctly reduce mp.size()
                 }
                 i++;
             }
             
-            if(mp.size()==k){
-                maxLen=max(maxLen, j-i+1);
+            // 3. Evaluate phase: Only update max length when window has exactly k distinct chars
+            if (mp.size() == k) {
+                maxLen = max(maxLen, j - i + 1);
             }
             
-            j++;
+            j++; // Keep moving the right pointer
         }
-        return maxLen;
+        
+        return maxLen; 
     }
 };
