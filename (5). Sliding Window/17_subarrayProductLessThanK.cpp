@@ -22,30 +22,38 @@ class Solution {
             }
         }
         return cnt; 
-        
+    }
+
 //Method-02: Optimal 
-        ll cnt=0;
-        ll prod=1;
-        if(k<=1) return 0;
-        int i=0,j=0;
-        while(j<n){
-            prod*=arr[j];
+       int countSubarray(vector<int>& arr, int k) {
+       
+        if (k <= 1) return 0;
+        
+        int n = arr.size();
+        long long prod = 1;
+        int cnt = 0;
+        int i = 0, j = 0;
+        
+        while (j < n) {
+            prod *= arr[j];
             
-            // shrink when invalid
-            while(i<=j && prod >= k){
+            // Shrink the window from the left if the product is too large
+            while (prod >= k) {
                 prod /= arr[i];
                 i++;
             }
-            // count all valid subarrays ending at j
-            cnt += (j - i + 1);
             
+            // All valid subarrays ending at index j contribute to the total count
+            cnt += (j - i + 1);
             j++;
         }
+        
         return cnt;
     }
+
 };
 
-/*//Alternative approach using logarithm {log(a*b)=log(a)+log(b)}
+//Alternative approach using logarithm {log(a*b)=log(a)+log(b)}
 
         int cnt = 0;
         int i = 0;
@@ -62,5 +70,5 @@ class Solution {
         }
         return cnt;
         
-*/       
+}
         
