@@ -44,3 +44,32 @@ class Solution {
         return maxSum;
     }
 };
+
+//(2) Maximum average subarray of size k (Work for -ve also) 
+class Solution {
+  public:
+    int findMaxAverage(vector<int>& arr, int k) {
+       
+       int maxSum=INT_MIN;
+       int n=arr.size();
+       int i=0,j=0;
+       int stIdx=-1;
+       int sum=0;
+       while(j<n){
+           sum+=arr[j];
+           
+           if(j-i+1==k){
+               
+               if(maxSum<sum){
+                   maxSum=sum;
+                   stIdx=i;
+               }
+               sum-=arr[i];
+               i++;
+           }
+           j++;
+       }
+        return stIdx;
+        //average= return (double)max_sum / k;
+    }
+};
