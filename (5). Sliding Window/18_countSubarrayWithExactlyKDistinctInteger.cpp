@@ -4,7 +4,7 @@ using namespace std;
 
 class Solution {
   public:
- /*Whenever a problem asks for exactly K distinct elements in a subarray (or substring), 
+ /*Whenever a problem asks for count exactly K distinct elements in a subarray (or substring), 
 use the “atMost” trick:
 exactly K= atMost(K)−atMost(K−1)
 reusable pattern for many sliding window problems.  
