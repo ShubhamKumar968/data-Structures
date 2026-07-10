@@ -34,25 +34,28 @@ class Solution {
             res[i]=NGE[i];
         }
         return res;
+    }
 
         //Method-2 Optimal
         
-        int n = arr.size();
-        stack<int> st;
-        vector<int> res(n, -1);
-    
-        for(int i = 2*n-1; i >= 0; i--) {
-    
-            while(!st.empty() && st.top() <= arr[i % n]){
-                   st.pop();
+        vector<int> nextGreater(vector<int> &arr) {
+        
+        int n=arr.size();
+        vector<int>res(n,-1);
+        stack<int>st;
+        
+        for(int i=2*n-1;i>=0;i--){
+            
+            while(!st.empty() && arr[st.top()]<=arr[i%n]){
+                st.pop();
             }
-               
-            if(i < n){
-                if(!st.empty()) res[i] = st.top();
+            
+            if(!st.empty()){
+                res[i%n]=arr[st.top()];
             }
-            st.push(arr[i % n]);
+            
+            st.push(i%n);
         }
-    
         return res;
     }
 };
