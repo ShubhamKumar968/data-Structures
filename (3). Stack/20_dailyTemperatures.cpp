@@ -44,7 +44,8 @@ public:
           
             st.push(i);
         }
-        
+
+        //temp[i]= NGR[i] - i;
         vector<int>temp(n);
         for(int i=0;i<n;i++){
            temp[i]=(NGR[i]-i) < 0 ? 0 : (NGR[i]-i);
