@@ -18,45 +18,65 @@ class Solution {
             }
         }
         return sum;
-        
-        //Method-2: Optimal (Using Stack)
-        int n=arr.size();
-        vector<int>left(n),right(n);
-        // Previous smaller
-        stack<int>st;
-        for(int i=0;i<n;i++){
-            
-            while( !st.empty() && arr[st.top()] > arr[i] ){
-                 st.pop();
-            }
-            
-            left[i]= st.empty()? i+1 :i-st.top();
-            st.push(i);
-            
-        }
-        
-        // Next smaller
-        while(!st.empty()) st.pop();
-        
-        for(int i=n-1;i>=0;i--){
-            
-            while(!st.empty() && arr[st.top()] >= arr[i]){
-                st.pop();
-            }
-            
-            right[i]=st.empty() ? n-i : st.top()-i;
-            st.push(i);
-        }
-        
-        int res=0;
-        for(int i=0;i<n;i++){
-            res+=arr[i]*left[i]*right[i];
-        }
-        
-        return res;
     }
 };
 
+//Method-2: Optimal (Using Stack)
+
+class Solution {
+  public:
+    int sumSubMins(vector<int> &arr) {
+        
+        int n = arr.size();
+
+        vector<int>PSL(n,-1);
+        vector<int>NSR(n,n);
+        stack<int> st;
+
+        // Previous Smaller 
+        for (int i = 0; i < n; i++) {
+
+            while (!st.empty() && arr[st.top()] >= arr[i]){
+                 st.pop();
+            }
+               
+            if(!st.empty()){
+                PSL[i]=st.top();
+            }
+            
+            st.push(i);
+        }
+
+        while (!st.empty())  st.pop();
+
+        // Next Smaller to right
+        for (int i = n - 1; i >= 0; i--) {
+
+            while (!st.empty() && arr[st.top()] > arr[i]){
+                st.pop();
+            }
+                
+            if(!st.empty()){
+                NSR[i]=st.top();
+            }
+           
+            st.push(i);
+        }
+
+        long long ans = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            long long left = i - PSL[i];
+            long long right = NSR[i] - i;
+
+            ans += 1LL * arr[i] * left * right;
+        }
+
+        return ans;
+        
+    }
+};
 //Instead of asking: "What is the minimum of each subarray?" ;; Ask: "For how many subarrays is arr[i] the minimum?"
 //If arr[i] is the minimum for k subarrays, then its total contribution is: arr[i] * k
 
