@@ -4,6 +4,36 @@ using namespace std;
 
 class Solution {
   public:
+
+  //Method-01
+
+int countDistinctPairs(vector<int> &arr, int target) {
+        
+        unordered_set<int> seen;
+        unordered_set<int> used;
+    
+        int cnt = 0;
+    
+        for (int x : arr) {
+    
+            int y = target - x;
+    
+            if (seen.count(y) && !used.count(x) && !used.count(y)) {
+    
+                cnt++;
+    
+                used.insert(x);
+                used.insert(y);
+            }
+    
+            seen.insert(x);
+        }
+    
+        return cnt;
+    }
+
+//Method-2:
+
     int countDistinctPairs(vector<int> &arr, int target) {
         
         int n = arr.size();
