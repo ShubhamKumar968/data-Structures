@@ -6,7 +6,9 @@ using namespace std;
 //For Unweighted or uniform weighted graph, bfs always give shortest path and faster than all algo.
 class Solution {
   public:
-    
+
+    //Method-01: based on dijkstra template
+
     void bfs(int src,vector<vector<int>>&adj,vector<int>&dist,int V){
         
         dist[src]=0;
@@ -36,6 +38,7 @@ class Solution {
         
         return;
     }
+
     vector<int> shortestPath(int V, vector<vector<int>> &edges, int src) {
         // code here
         
@@ -53,3 +56,57 @@ class Solution {
         return dist;
     }
 };
+
+//Method-02: Based on levelwise traversal (same as rotting oranges template)
+
+class Solution {
+  public:
+    int shortestPath(int V, vector<vector<int>> &edges, int src, int dest) {
+        
+        vector<vector<int>>adj(V);
+        
+        for(auto&e:edges){
+            int u=e[0];
+            int v=e[1];
+            
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        
+        
+        int step=0;
+        queue<int>q;
+        q.push(src);
+        vector<bool>vis(V,false);
+        vis[src]=true;
+        
+        
+        while(!q.empty()){
+            
+            int N=q.size();
+            
+            while(N--){
+            
+                int u=q.front();
+                q.pop();
+                
+                if(u==dest){
+                    return step;
+                }
+                for(auto &v:adj[u]){
+                    if(!vis[v]){
+                        q.push(v);
+                        vis[v]=true;
+                    }
+                    
+                }
+                
+            }
+       
+            step++;
+        }
+        
+        return -1;
+    }
+};
+
