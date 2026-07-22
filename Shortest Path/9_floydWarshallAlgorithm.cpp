@@ -18,7 +18,7 @@ void floydWarshall(int V, vector<vector<int>>&edges){
         int wt=edge[2];
 
         dist[u][v]=wt;
-        par[u][v]=v;//Next step from u toward v is v rwise otheYou would get stuck at the same node.
+        par[u][v]=v;//Next step from u toward v is v  otherwise You would get stuck at the same node.
     }
     //floyd warshall to find all pair shortest path via all node
     for(int via = 0; via < V; via++){
