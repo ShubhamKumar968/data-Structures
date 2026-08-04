@@ -102,3 +102,36 @@ class Solution {
         return maxLen;
     }
 };
+
+//(3) count subarray with exactly k odd numbers
+
+class Solution {
+  public:
+    int countSubarrays(vector<int>& arr, int k) {
+        
+        int n=arr.size();
+        unordered_map<int,int>mp;
+        int cnt=0;
+        
+        int oddCount=0;
+        int j=0;
+        mp[0]=1;
+        
+        while(j<n){
+            
+            if(arr[j]%2!=0){
+                oddCount++;
+            }
+            
+            if(mp.count(oddCount-k)){
+                cnt+=mp[oddCount-k];
+            }
+            
+            mp[oddCount]++;
+            
+            j++;
+        }
+        
+        return cnt;
+    }
+};
