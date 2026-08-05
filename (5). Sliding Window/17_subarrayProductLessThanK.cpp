@@ -38,7 +38,7 @@ class Solution {
             prod *= arr[j];
             
             // Shrink the window from the left if the product is too large
-            while (prod >= k) {
+            while (i <= j && prod >= k) {
                 prod /= arr[i];
                 i++;
             }
