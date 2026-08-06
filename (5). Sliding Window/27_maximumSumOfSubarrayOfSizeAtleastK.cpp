@@ -27,7 +27,7 @@ class Solution {
             prevSum = max(arr[i], prevSum + arr[i]);
 
             // Take fixed window alone or attach positive prevSum
-            maxSum = max(maxSum, prefixSum + max(0, prevSum));
+            maxSum=max({maxSum,prefixSum,prefixSum+prevSum});
 
             i++;
             j++;
