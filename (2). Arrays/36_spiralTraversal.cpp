@@ -1,9 +1,7 @@
-#include<iostream>
-using namespace std;
-#include<bits/stdc++.h>
-
 class Solution {
+    
   public:
+  
     vector<int> spirallyTraverse(vector<vector<int>> &mat) {
      
         int m = mat.size();    // Number of rows
@@ -22,32 +20,26 @@ class Solution {
             for (int j = scol; j <= ecol; j++) {
                 res.push_back(mat[srow][j]);
             }
+            srow++;
             
             // 2. Traverse Right column (top to bottom)
-            // Starts from srow + 1 to avoid repeating the top-right corner
-            for (int i = srow + 1; i <= erow; i++) {
+            for (int i = srow; i <= erow; i++) {
                 res.push_back(mat[i][ecol]);
             }
+            ecol--;
             
             // 3. Traverse Bottom row (right to left)
-            for (int j = ecol - 1; j >= scol; j--) {
-                if (srow == erow) { // Avoid duplicate row processing in single-row matrix
-                    break;
-                }
+            for (int j = ecol; j >= scol && srow<=erow; j--) {
                 res.push_back(mat[erow][j]);
             }
+            erow--;
             
             // 4. Traverse Left column (bottom to top)
-            for (int i = erow - 1; i >= srow + 1; i--) {
-                if (scol == ecol) { // Avoid duplicate column processing in single-column matrix
-                    break;
-                }
+            for (int i = erow; i >= srow && scol<=ecol; i--) {
                 res.push_back(mat[i][scol]);
             }
+            scol++;
             
-            // Shrink boundaries inward for the next layer of the spiral
-            srow++; erow--;
-            scol++; ecol--;
         }
         return res;
     }
