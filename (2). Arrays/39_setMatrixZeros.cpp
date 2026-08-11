@@ -39,48 +39,61 @@ class Solution {
 class Solution {
   public:
     void setMatrixZeroes(vector<vector<int>> &mat) {
-       
-        int m = mat.size();
-        int n = mat[0].size();
         
+        int n = mat.size();
+        int m = mat[0].size();
+
         bool firstRowZero = false;
         bool firstColZero = false;
-        
-        // Step 1: Check if the first row or first column contains any zeros initially
-        for (int j = 0; j < n; j++) {
-            if (mat[0][j] == 0) firstRowZero = true;
+
+        // 1. Check if the 0th row has any zeroes
+        for (int j = 0; j < m; j++) {
+            if (mat[0][j] == 0) {
+                firstRowZero = true;
+                break;
+            }
         }
-        
-        for (int i = 0; i < m; i++) {
-            if (mat[i][0] == 0) firstColZero = true;
+
+        // 2. Check if the 0th column has any zeroes
+        for (int i = 0; i < n; i++) {
+            if (mat[i][0] == 0) {
+                firstColZero = true;
+                break;
+            }
         }
-        
-        // Step 2: Use the first row and first column as trackers/markers
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
+
+        // 3. Mark zeroes in the first row and column for the rest of the matrix
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j < m; j++) {
                 if (mat[i][j] == 0) {
-                    mat[i][0] = 0; // Mark its row header
-                    mat[0][j] = 0; // Mark its column header
+                    mat[i][0] = 0; // Flag row i;  // Mark its row header
+                    mat[0][j] = 0; // Flag column j; // Mark its column header
                 }
             }
         }
-        
-        // Step 3: Zero out internal cells based on the markers
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
+
+        // 4. Update the inner matrix using markers
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j < m; j++) {
                 if (mat[i][0] == 0 || mat[0][j] == 0) {
                     mat[i][j] = 0;
                 }
             }
         }
-        
-        // Step 4: Finally, zero out the first row and column if needed
+
+        // 5. Zero out the first row if needed
         if (firstRowZero) {
-            for (int j = 0; j < n; j++) mat[0][j] = 0;
+            for (int j = 0; j < m; j++) {
+                mat[0][j] = 0;
+            }
         }
-        
+
+        // 6. Zero out the first column if needed
         if (firstColZero) {
-            for (int i = 0; i < m; i++) mat[i][0] = 0;
+            for (int i = 0; i < n; i++) {
+                mat[i][0] = 0;
+            }
         }
     }
 };
+
