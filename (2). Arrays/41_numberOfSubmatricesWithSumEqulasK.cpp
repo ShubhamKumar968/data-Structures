@@ -5,52 +5,56 @@ using namespace std;
 //(1) Number of submatrices with sum equals x
 
 class Solution {
-  public:
-    int countSquare(vector<vector<int>>& mat, int x) {
-        
-        int n = mat.size();
-        int m = mat[0].size();
+public:
+
+    // Count subarrays with sum = target
+    int countSubarrays(vector<int>& arr, int target) {
+
         int count = 0;
-        
-        // Step 1: Initialize the 2D Prefix Sum Matrix with 1-based indexing
-        vector<vector<int>> pref(n + 1, vector<int>(m + 1, 0));
-        
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= m; j++) {
-                pref[i][j] = mat[i - 1][j - 1] 
-                           + pref[i - 1][j] 
-                           + pref[i][j - 1] 
-                           - pref[i - 1][j - 1];
+        int prefixSum = 0;
+
+        unordered_map<int, int> freq;
+        freq[0] = 1;
+
+        for (int num : arr) {
+
+            prefixSum += num;
+
+            // Check if a previous prefix gives sum = target
+            if (freq.find(prefixSum - target) != freq.end()) {
+                count += freq[prefixSum - target];
             }
+
+            freq[prefixSum]++;
         }
-        
-        // Step 2: Iterate over all possible square submatrices
-        // Max possible size of a square is bounded by the smaller dimension of the matrix
-        int maxSize = min(n, m);
-        
-        for (int size = 1; size <= maxSize; size++) {
-            // (i, j) represents the 0-indexed top-left corner of the square submatrix
-            for (int i = 0; i <= n - size; i++) {
-                for (int j = 0; j <= m - size; j++) {
-                    
-                    // Calculate the bottom-right corner coordinates
-                    int r1 = i, c1 = j;
-                    int r2 = i + size - 1, c2 = j + size - 1;
-                    
-                    // O(1) Submatrix Sum using Prefix Sum Matrix
-                    int current_sum = pref[r2 + 1][c2 + 1] 
-                                    - pref[r1][c2 + 1] 
-                                    - pref[r2 + 1][c1] 
-                                    + pref[r1][c1];
-                    
-                    if (current_sum == x) {
-                        count++;
-                    }
-                }
-            }
-        }
-        
+
         return count;
+    }
+
+    int numSubmatrixSumTarget(vector<vector<int>>& matrix, int target) {
+ 
+        int rows = matrix.size();
+        int cols = matrix[0].size();
+
+        int answer = 0;
+
+        for (int top = 0; top < rows; top++) {
+
+            vector<int> columnSum(cols, 0);
+
+            for (int bottom = top; bottom < rows; bottom++) {
+
+                // Compress rows between top and bottom into 1D array
+                for (int col = 0; col < cols; col++) {
+                    columnSum[col] += matrix[bottom][col];
+                }
+
+                // Find subarrays with sum = target
+                answer += countSubarrays(columnSum, target);
+            }
+        }
+
+        return answer;
     }
 };
 
