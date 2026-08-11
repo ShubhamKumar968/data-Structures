@@ -7,36 +7,32 @@ using namespace std;
 class Solution {
   public:
     void setMatrixZeroes(vector<vector<int>> &mat) {
-       
-       int m=mat.size();
-       int n=mat[0].size();
-       // Create a temporary copy of the original matrix to preserve state
-       vector<vector<int>> temp = mat;
-       
-       for (int i = 0; i < m; i++) {
-           for (int j = 0; j < n; j++) {
-               
-               // If a cell is 0 in the original matrix
-               if (mat[i][j] == 0) {
-                   
-                   // Zero out the entire row in our temp matrix
-                   for (int k = 0; k < n; k++) {
-                       temp[i][k] = 0;
-                   }
-                   
-                   // Zero out the entire column in our temp matrix
-                   for (int k = 0; k < m; k++) {
-                       temp[k][j] = 0;
-                   }
-               }
-           }
-       }
-       
-       // Copy the updated states back into the original matrix
-       mat = temp;
-       return;
+        // code here
+         int rows=mat.size();
+         int cols=mat[0].size();
+         unordered_set<int>row;
+         unordered_set<int>col;
+         
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                 if(mat[i][j]==0){
+                     row.insert(i);
+                     col.insert(j);
+                 }
+                
+            }
+        }
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                 if(row.find(i)!=row.end()|| col.find(j)!=col.end()){
+                     mat[i][j]=0;
+                 }
+                
+            }
+        }
     }
 };
+
 
 //Method-2: Optimal
 
