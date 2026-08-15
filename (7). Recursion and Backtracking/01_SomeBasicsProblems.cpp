@@ -163,7 +163,7 @@ class Solution {
 
     bool isPalindrome(int n) {
         
-        n=abs(n);
+        int val=abs(n);
         long long rev = reverse(n, 0);
         return rev == n;
     }
