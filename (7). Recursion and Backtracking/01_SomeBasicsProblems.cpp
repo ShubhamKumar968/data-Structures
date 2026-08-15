@@ -152,39 +152,23 @@ class Solution {
 
 class Solution {
   public:
-  
-    int reverse(int n){
+    //Method-01 (Using Recursion)
+    long long reverse(int n, long long rev) {
         
-        int rev=0;
-        while(n>0){
-            rev=rev*10  + n%10;
-            n/=10;
+        if (n == 0) {
+            return rev;
         }
-        return rev;
+        return reverse(n / 10, rev * 10 + n % 10);
     }
-    bool solve2(string s, int st, int end){
-        
-        if(st>=end) return true;
-        
-        if(s[st] != s[end]) return false;
-        
-        return solve2(s, st+1, end-1);
-    }
-    
+
     bool isPalindrome(int n) {
-        // code here.
-       
-//Method-01 (Using reverse)
-       
-       int rev= reverse(n);
-       return (n==rev) ? true : false;
-       
-//Method-02 (Using Recursion)
-       string s=to_string(n);
-       return solve2(s,0,s.length()-1);
+        
+        n=abs(n);
+        long long rev = reverse(n, 0);
+        return rev == n;
     }
 };
-
+  
 //(10) Sum of array elements
 class Solution {
   public:
