@@ -274,30 +274,31 @@ class Solution {
 
 class Solution {
   public:
-    int solve(vector<int> &arr, int k,int st,int end){
+    
+    int solve(vector<int> &arr, int k,int l, int h,int &idx){
         
-        if(st>end){
-            return -1;
-        }
+        if(l>h) return -1;
+        int mid=l+(h-l)/2;
         
-        int mid=st+ (end-st)/2;
-      
         if(arr[mid]==k){
-            
-            int left = solve(arr, k, st, mid - 1);// move left for first occurrence
-            if(left != -1) return left;   // smaller index found
-            return mid;                   // current is smallest
+            idx=mid;
+            return solve(arr,k,l,mid-1, idx);//move to the left for finding the first occurrences
         }
         else if(arr[mid]>k){
-            return solve(arr,k,st,mid-1);
+            return solve(arr,k,l,mid-1, idx);
+        }else{
+            return solve(arr,k,mid+1,h, idx);
         }
-        else{
-            return solve(arr,k,mid+1,end);
-        }
-        
     }
-    int binarysearch(vector<int> &arr, int k) {
-        // code here
-        return solve(arr,k,0, arr.size()-1);
+    
+    int firstSearch(vector<int> &arr, int k) {
+        
+        int n=arr.size();
+        int idx=-1;
+        int l=0, h=n-1;
+        
+        solve(arr,k,l,h,idx);
+        
+        return idx;
     }
 };
