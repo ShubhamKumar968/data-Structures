@@ -302,3 +302,31 @@ class Solution {
         return idx;
     }
 };
+
+//(16) fibonacci using recursion:-
+
+class Solution {
+  public:
+    
+    void solve(int n, vector<int>& res, int i) {
+        // Base case: stop when reaching the end of the array
+        if (i >= n) return;
+
+        if (i <= 1) {
+            res[i] = i; // res[0] = 0, res[1] = 1
+        } else {
+            res[i] = res[i - 1] + res[i - 2];
+        }
+
+        solve(n, res, i + 1);
+    }
+
+    vector<int> fibonacciNumbers(int n) {
+        
+        if (n <= 0) return {};
+
+        vector<int> res(n);
+        solve(n, res, 0);
+        return res;
+    }
+};
