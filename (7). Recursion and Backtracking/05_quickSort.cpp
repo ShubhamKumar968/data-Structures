@@ -8,43 +8,40 @@ class Solution {
   public:
   
     //{pivot selection + Partionining + Recursion }
-    void quickSort(vector<int>& arr, int low, int high) {
-        // Base Case: If the subarray has 0 or 1 element, it's already sorted
-        if(low >= high){
+     void quickSort(vector<int>& arr, int low, int high) {
+        // Base case: subarray of size 0 or 1 is already sorted
+        if (low >= high) {
             return;
         }
-        // Step 1: Partition the array and get pivot's correct index
-        int pivotIdx = partition(arr,low,high);
-        // Step 2: Recursively sort elements before pivot
-        quickSort(arr,low,pivotIdx-1);
-        // Step 3: Recursively sort elements after pivot
-        quickSort(arr,pivotIdx+1,high);
-        
-        
+
+        // Place pivot in its correct sorted position
+        int pivotIdx = partition(arr, low, high);
+
+        // Recursively sort elements before and after pivot
+        quickSort(arr, low, pivotIdx - 1);
+        quickSort(arr, pivotIdx + 1, high);
     }
 
     int partition(vector<int>& arr, int low, int high) {
         
-        // Step 1: Choose last element as pivot
-        int pivot=arr[high];
-        // Step 2: Initialize pointer for smaller elements
-       // pivotIdx will track position where next smaller element should go
-        int pivotIdx= low;
-        // Step 3: Traverse array from low to high-1
-        for(int i=low; i< high ; i++){
-            
-            if(arr[i] <= pivot){
-                // Place it in correct position (left side)
+        // 1. Pick last element as pivot
+        int pivot = arr[high];
+        
+        // 2. 'pivotIdx' tracks where the next element <= pivot should go
+        int pivotIdx = low;
+
+        // 3. Move all elements <= pivot to the left side
+        for (int i = low; i < high; i++) {
+            if (arr[i] <= pivot) {
                 swap(arr[i], arr[pivotIdx]);
-                // Move pivotIdx forward
                 pivotIdx++;
             }
         }
-        // Step 4: Place pivot in its correct sorted position
+
+        // 4. Place pivot right after the smaller elements
         swap(arr[high], arr[pivotIdx]);
-        // Step 5: Return pivot index
-        return pivotIdx;
-        
+
+        return pivotIdx; // Final index of the pivot
     }
 };
 //Pivot = element around which the array is rearranged
