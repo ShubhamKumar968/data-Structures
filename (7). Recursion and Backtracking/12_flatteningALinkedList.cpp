@@ -18,40 +18,40 @@ public:
 
 class Solution {
   public:
-        // code here
-    Node* merge2list(Node* root, Node*head){ //O(2*m)
         
-        if(root==NULL) return head;
-        if(head==NULL) return root;
-        Node* res;
-            if(root->data<head->data){
-                res=root;
-                res->bottom=merge2list(root->bottom,head);
-            }else{
-                res=head;
-                res->bottom=merge2list(root,head->bottom);
-            }
-            
-        res->next = NULL;
-        return res;
+    // Merges two sorted linked lists along the 'bottom' pointer
+Node* mergeTwoLists(Node* a, Node* b) {
+    if (!a) return b;
+    if (!b) return a;
+
+    Node* result = nullptr;
+    if (a->data <= b->data) {
+        result = a;
+        result->bottom = mergeTwoLists(a->bottom, b);
+    } else {
+        result = b;
+        result->bottom = mergeTwoLists(a, b->bottom);
     }
+    
+    result->next = nullptr; // Ensure next pointers are disconnected
+    return result;
+}
     
 //TC=O(2m + 3m + 4m + 5m +...)=O(m*n*n) m=number of nodes in base, n=no. of nodes
 
-    Node *flatten(Node *root) {
-        // code here
-        if (root == NULL || root->next == NULL) {
-             return root;
-        }
 
-       // Step 1: flatten remaining list
-        root->next = flatten(root->next);
+// Recursively flattens the multi-level linked list
+Node* flatten(Node* root) {
+    // Base case: 0 or 1 list remaining
+    if (!root || !root->next) return root;
 
-        // Step 2: merge current with next
-        root = merge2list(root, root->next);
+    // 'a' is the current list, 'b' is the flattened list from the right
+    Node* a = root;
+    Node* b = flatten(root->next);
 
-        return root;
-    }
+    // Merge both sorted lists
+    return mergeTwoLists(a, b);
+}
 };
 
 //1. ↓ represents the bottom pointer and → represents the next pointer.
