@@ -57,29 +57,43 @@ class Solution {
 
         return head;
     }
+    
+};
 
-//Method-01: Optimal   {TC=O(N); SC=O(height of recursion only)}
-    Node* prev = nullptr; 
+
+//Method-02: Optimal   {TC=O(N); SC=O(height of recursion only)}
+class Solution {
+    
+private:
+
+    void flattenHelper(Node* root, Node*& prev) {
+        
+        if (!root) return;
+
+        // 1. Flatten right subtree
+        flattenHelper(root->right, prev);
+
+        // 2. Cache left pointer before modifying root
+        Node* leftSubtree = root->left;
+
+        // 3. Link current node to the already flattened right part
+        root->right = prev;
+        root->left = NULL;
+        prev = root;
+
+        // 4. Flatten left subtree
+        flattenHelper(leftSubtree, prev);
+    }
+
+public:
+
     Node* flattenBST(Node* root) {
         
-        if (!root) return nullptr;
+        Node* prev = NULL;
+        
+        flattenHelper(root, prev);
 
-        // 1. Recurse to the leftmost node (this will be our new head)
-        Node* head = flattenBST(root->left);
-
-        // 2. Process Current Node
-        if (prev != nullptr) {
-            prev->right = root;
-        }
-        root->left = nullptr; // Essential: Break the left link
-        prev = root;          // Update prev to current
-
-        // 3. Recurse to the right
-        flattenBST(root->right);
-
-        // Logic: If 'head' is null, it means there was no left subtree, 
-        // so 'root' itself is the smallest element (the head).
-        return (head != nullptr) ? head : root;
+        // prev will hold the smallest element (new head)
+        return prev;
     }
-    
 };
