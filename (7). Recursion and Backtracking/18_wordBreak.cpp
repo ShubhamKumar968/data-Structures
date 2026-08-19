@@ -6,38 +6,42 @@ using namespace std;
 //space-separated sequence of one or more dictionary words.
 class Solution {//O(n*n)
   public:
-    int memo[3001];
-    bool solve(string &s,unordered_set<string>&st,int idx,int n){
-        
-        if(idx==n){
+    int dp[3001]; // dp[i]: -1 = unvisited, 0 = false, 1 = true
+
+    bool solve(string &s, int idx, int n, unordered_set<string> &st) {
+        // Base case: reached end of string successfully by partitioning
+        if (idx >= n) {
             return true;
         }
-        // Memoization check: If we already know if s[idx...n] can be broken
-        if (memo[idx] != -1) return memo[idx];
-        
-        string temp="";
-        
-        for(int i=idx;i<n;i++){
-            temp+=s[i];// Building the prefix: s[idx...i]
+
+        // Return cached result if already calculated
+        if (dp[idx] != -1) {
+            return dp[idx];
+        }
+
+        string temp = "";
+        for (int i = idx; i < n; i++) {
             
-            
-            // If the current prefix is in the dictionary
-            if(st.count(temp)){
-                // Check if the REMAINING part (starting from i+1) can be broken
-                if(solve(s,st,i+1,n)==true){
-                    return memo[idx]=true;
+            temp.push_back(s[i]);// Form substring s[idx...i]
+
+           // If current prefix is valid, check if the remaining substring can be segmented
+            if (st.count(temp)) {
+                if (solve(s, i + 1, n, st)) {
+                    return dp[idx] = true;
                 }
-                
             }
         }
-        return memo[idx]=false;
+
+        // If no valid partition starting from idx leads to a solution
+        return dp[idx] = false;
     }
+
     bool wordBreak(string &s, vector<string> &dictionary) {
-        // code here
-        unordered_set<string>st(dictionary.begin(),dictionary.end());
-        int n=s.length();
-        memset(memo,-1,sizeof(memo));
-        return solve(s,st,0,n);
+        int n = s.size();
+        memset(dp, -1, sizeof(dp));
+        
+        unordered_set<string> st(dictionary.begin(), dictionary.end());
+        return solve(s, 0, n, st);
     }
 };
 
