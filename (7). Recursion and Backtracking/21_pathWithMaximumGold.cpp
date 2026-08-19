@@ -4,44 +4,53 @@ using namespace std;
 
 //TC=O(4^m*n)
 class Solution {
-public:
+private:
+
+    int maxGold = 0;
     vector<vector<int>> dir = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
 
-    int solve(vector<vector<int>>& grid, int i, int j, int m, int n) {
+    void dfs(vector<vector<int>>& grid, int i, int j, int m, int n, int currentSum) {
+
+        // 1. Base Case: Out of boundary or empty/visited cell
         if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0) {
-            return 0;
+            return;
         }
 
-        int originalGold = grid[i][j];
-        grid[i][j] = 0; // Mark as visited
+        // 2. Add current cell's gold and update answer
+        currentSum += grid[i][j];
+        maxGold = max(maxGold, currentSum);
 
-        int maxNext = 0; // Find best downstream path
+        // 3. Mark as visited
+        int temp = grid[i][j];
+        grid[i][j] = 0;
+
+        // 4. Recurse in all 4 directions unconditionally
         for (auto &d : dir) {
-            int ni = i + d[0];
-            int nj = j + d[1];
-            
-            maxNext = max(maxNext, solve(grid, ni, nj, m, n));
+            int ni=i + d[0];
+            int nj=j + d[1];
+            dfs(grid, ni, nj, m, n, currentSum);
         }
 
-        grid[i][j] = originalGold; // Backtrack
-
-        // Add current cell's gold to the best neighboring path
-        return originalGold + maxNext;
+        // 5. Backtrack
+        grid[i][j] = temp;
     }
 
+public:
+
     int getMaximumGold(vector<vector<int>>& grid) {
+        
         int m = grid.size();
         int n = grid[0].size();
-        int maxi = 0;
+        maxGold = 0;
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] != 0) {
-                    maxi = max(maxi, solve(grid, i, j, m, n));
+                    dfs(grid, i, j, m, n, 0);
                 }
             }
         }
 
-        return maxi;
+        return maxGold;
     }
 };
