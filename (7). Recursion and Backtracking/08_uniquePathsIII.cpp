@@ -7,54 +7,70 @@ using namespace std;
 
 class Solution {
 public:
-   vector<vector<int>>dir={{-1,0},{0,-1},{1,0},{0,1}};
-    int solve(vector<vector<int>>& grid, int m, int n, int i, int j,  int nonObstacle ){
+    
+    typedef pair<int,int>p;
+    vector<vector<int>>dir={{1,0},{0,1},{-1,0},{0,-1}};
 
-        if(i<0 || i>=m || j<0 || j>=n || grid[i][j]==-1){
-            return 0;
-        }
+    void solve(vector<vector<int>>& grid, int i, int j, p& dest,int NonObstacle,int m, int n,int & paths){
         
-        if(grid[i][j]==2){
-            if(nonObstacle==1){
-                return 1;
+        NonObstacle--;
+        if(i==dest.first && j==dest.second){
+            if(NonObstacle==0){
+                paths++;
             }
-            return 0;
+
+            return;
         }
         
-        int cnt=0;
+        if(i<0 || i>=m || j<0 || j>=n || grid[i][j]==-1){
+            return;
+        }
+
         int temp=grid[i][j];
         grid[i][j]=-1;
-        nonObstacle--;
+
         for(auto &d:dir){
             int ni=i+d[0];
             int nj=j+d[1];
 
-            cnt+= solve(grid,m,n,ni,nj,nonObstacle);
+            solve(grid,ni,nj,dest,NonObstacle,m,n,paths);
         }
 
         grid[i][j]=temp;
-        nonObstacle++;
 
-        return cnt;
+        return;
     }
-
     int uniquePathsIII(vector<vector<int>>& grid) {
+        
         int m=grid.size();
         int n=grid[0].size();
-        pair<int,int>src;
-        int nonObstacle=0;
+
+        int NonObstacle=0;
+        
+        p src,dest;
+
         for(int i=0;i<m;i++){
             for(int j=0;j<n;j++){
-                if(grid[i][j]==1) src={i,j};
-                if(grid[i][j]!=-1)nonObstacle++;
+
+                if(grid[i][j]==1){
+                    src={i,j};
+                }else if(grid[i][j]==2){
+                    dest={i,j};
+                }
+
+                if(grid[i][j]==-1){
+                    continue;
+                }
+
+                NonObstacle++;
             }
         }
-
         
-        return solve(grid,m,n,src.first,src.second,nonObstacle);
-       
+        int path=0;
+        solve(grid,src.first,src.second,dest,NonObstacle,m,n,path);
+        return path;
     }
-   
 };
+   
 //Time: O(3^(m*n)) (pruned heavily by obstacles and visited checks)
 //Space: O(m*n) recursion stack
