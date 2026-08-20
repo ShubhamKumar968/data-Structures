@@ -4,64 +4,59 @@ using namespace std;
 
 class Solution {
   public:
+    // Ensure 'path' is passed by reference (string& path) to avoid O(N) string copies per call
     
-    void solve(vector<vector<int>>& maze, int i, int j, string &temp, vector<string>& res, int n) {
-        // 1. Boundary and Obstacle Check
-        // We check this first to ensure i and j are valid before accessing maze[i][j]
-        if (i < 0 || i >= n || j < 0 || j >= n || maze[i][j] == 0) {
+    void solve(vector<vector<int>>& maze, int i, int j, int n, vector<string>& res, string& path){
+        
+        // 1. Added Invalid Boundry and cell check
+        if(i < 0 || i >= n || j < 0 || j >= n || maze[i][j] == 0 || maze[i][j] == -1) {
             return;
         }
-    
-        // 2. Destination Check
-        if (i == n - 1 && j == n - 1) {
-            res.push_back(temp);
+        
+        
+        if(i == n - 1 && j == n - 1) {
+            res.push_back(path);
             return;
         }
-    
-        // 3. Mark the current cell as visited
-        int originalValue = maze[i][j];
-        maze[i][j] = 0; 
-    
-        // 4. Explore directions in Lexicographical Order (usually D, L, R, U)
-        // Down
-        temp.push_back('D');
-        solve(maze, i + 1, j, temp, res, n);
-        temp.pop_back();
-    
-        // Left
-        temp.push_back('L');
-        solve(maze, i, j - 1, temp, res, n);
-        temp.pop_back();
-    
-        // Right
-        temp.push_back('R');
-        solve(maze, i, j + 1, temp, res, n);
-        temp.pop_back();
-    
-        // Up
-        temp.push_back('U');
-        solve(maze, i - 1, j, temp, res, n);
-        temp.pop_back();
-    
-        // 5. Backtrack: Unmark the current cell for other possible paths
-        maze[i][j] = originalValue;
-   }
+
+        int temp = maze[i][j];
+        maze[i][j] = -1; // Mark as visited
+
+        // 2. Lexicographical order (D, L, R, U) to avoid sorting later
+        path.push_back('D');
+        solve(maze, i + 1, j, n, res, path);
+        path.pop_back();
+
+        path.push_back('L');
+        solve(maze, i, j - 1, n, res, path);
+        path.pop_back();
+
+        path.push_back('R');
+        solve(maze, i, j + 1, n, res, path);
+        path.pop_back();
+
+        path.push_back('U');
+        solve(maze, i - 1, j, n, res, path);
+        path.pop_back();
+
+        maze[i][j] = temp; // Backtrack
+        return;
+    }
 
     vector<string> ratInMaze(vector<vector<int>>& maze) {
-        int n = maze.size();
+        
         vector<string> res;
-        string temp = "";
-    
-        // Edge case: Start or End is blocked
-        if (n == 0 || maze[0][0] == 0 || maze[n - 1][n - 1] == 0) {
-            return res;
-        }
-    
-        solve(maze, 0, 0, temp, res, n);
-        sort(res.begin(), res.end());//lexicographically sorted
+        string path = "";
+        int n = maze.size();
+
+        // 3. Early exit if start or end is blocked
+        if(maze[0][0] == 0 || maze[n-1][n-1] == 0) return res;
+
+        solve(maze, 0, 0, n, res, path);
+
+        // sort(res.begin(), res.end()); <-- No longer needed!
         return res;
     }
-    
 };
 
 //Time Complexity: O(4 ^ (n * n)) but actually jaha se rat aaya hai waha wapas nhi ja sakta isliye current cell ke pas 3 hi choice hai. 
