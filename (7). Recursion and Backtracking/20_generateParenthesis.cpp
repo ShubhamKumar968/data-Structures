@@ -9,20 +9,24 @@ class Solution {
 public:
     vector<string> result;
 
-    bool isValid(string str) {
-        int count = 0;
-
-        for(char ch:str) {
-            if(ch == '(')
-                count++;
-            else
-                count--;
-            if(count < 0)
-                return false;
-        }
-        return count==0;
+       bool isValid(string str) {
+    
+            stack<char> st;
+            for (char ch : str) {
+        
+                if (ch == '(') {
+                    st.push(ch);
+                }
+                else {
+                    // no opening bracket to match
+                    if (st.empty()) return false;
+                    
+                    st.pop();
+                }
+            }
+            // stack should be empty
+            return st.empty();
     }
-
     void solve(string& curr, int n) {
         if(curr.length() == 2*n) {
             if(isValid(curr)) {
