@@ -7,94 +7,44 @@ using namespace std;
 class Solution {
 public:
 
-//Method-01
-    bool isValidBox(vector<vector<char>>& board, int sr,int er,
-                   int sc, int ec){
-        
-        unordered_set<char>st;
-        for(int i=sr; i<=er; i++){
-            for(int j=sc; j<=ec; j++){
-                if(board[i][j]=='.') continue;
-
-                if(st.count(board[i][j])) return false;
-                st.insert(board[i][j]);
-            }
-        }
-        return true;
-    }
-
     bool isValidSudoku(vector<vector<char>>& board) {
-       
-        // step-1: Validate rows
-        for(int row=0;row<9;row++){
-           
-           unordered_set<char>st;
-            for(int col=0;col<9;col++){
-               
-                if(board[row][col]=='.') continue;
-                if(st.count(board[row][col])){
-                   return false;
-                }
-                st.insert(board[row][col]);
-            }
 
-        }
-        // step-2: Validate columns(for each column we will check every row)
-        for(int col=0;col<9;col++){
-           
-           unordered_set<char>st;
-            for(int row=0;row<9;row++){
-               
-                if(board[row][col]=='.') continue;
-                if(st.count(board[row][col])){
-                   return false;
-                }
-                st.insert(board[row][col]);
-            }
-
-        }
-
-        //step-3:- Validate  each 3*3 boxes
-
-        for(int sr=0;sr<9;sr+=3){
-            int er=sr+2;
-            for(int sc=0;sc<9;sc+=3){
-                int ec=sc+2;
-
-                if(!isValidBox(board,sr,er,sc,ec)) return false;
-            }
-        }
-
-        return true;
-    }
-
-//Method-02
-
-
-    bool isValidSudoku(vector<vector<char>>& board) {
-       
+        // store row, column and box information
         unordered_set<string> st;
 
-        for(int i = 0; i < 9; i++){
-            for(int j = 0; j < 9; j++){
-                
-                if(board[i][j] == '.') continue;
-                
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+
+                // skip empty cell
+                if (board[i][j] == '.')
+                    continue;
+
+                // create unique keys for row, column and box
                 string row = "r" + to_string(i) + board[i][j];
                 string col = "c" + to_string(j) + board[i][j];
-                string box = "b" + to_string(i/3) + to_string(j/3) + board[i][j];//(i/3,j/3):Together → identify which 3×3 box
-                
-                if(st.count(row) || st.count(col) || st.count(box)){
+                string box = "b" + to_string(i / 3) +
+                             to_string(j / 3) + board[i][j];
+
+                // check if number is already present
+                if (st.count(row) ||
+                    st.count(col) ||
+                    st.count(box)) {
                     return false;
                 }
-                
+
+                // mark number as seen
                 st.insert(row);
                 st.insert(col);
                 st.insert(box);
             }
         }
+
         return true;
     }
+
+row  → "r" + row number + digit
+col  → "c" + column number + digit
+box  → "b" + box position + digit
 };
 
 //(2).  Sudoku Solver {TC=O(9^81)=O(1); SC=O(1)}
