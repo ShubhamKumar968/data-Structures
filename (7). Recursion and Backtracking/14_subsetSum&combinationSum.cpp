@@ -2,6 +2,12 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+//During Take Scenario:- 
+Problem condition	                      take call	                          Meaning
+Use element only once	                solve(..., idx + 1)	             Take → move forward
+Reuse element unlimited times	        solve(..., idx)	                 Take → stay at same index
+Combination Sum IV / order matters	  solve(..., 0)	                   After taking, start from beginning
+
 //(1)find all unique combination that sum upto target, each number may used only once.
 class Solution {
   public:
