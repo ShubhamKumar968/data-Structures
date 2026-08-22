@@ -330,3 +330,24 @@ class Solution {
         return res;
     }
 };
+
+//(17)Trailing Zero in n!
+
+class Solution {
+    public:
+    
+      //In n!, there are always more factors of 2 than factors of 5, so the number of zeroes is determined by the number of 5s.
+      int trailingZeroes(int n) {
+          int count = 0;
+
+          // Formula:
+          // trailing zeroes = floor(n/5) + floor(n/25) + floor(n/125) + ...
+          // Count all factors of 5 in n!
+          while (n >= 5) {
+              n /= 5;
+              count += n;
+          }
+
+          return count;
+      }
+  };
