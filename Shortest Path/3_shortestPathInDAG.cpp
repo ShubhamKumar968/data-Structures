@@ -113,3 +113,54 @@ class Solution {
         return dist;
     }
 };
+
+//(2) Longest path in DAG
+
+class Solution {
+  public:
+    typedef pair<int,int>p;
+    void dijkstra(int src, vector<vector<p>>&adj,vector<int>&dist){
+        
+        priority_queue<p>pq;
+        pq.push({0,src});
+        dist[src]=0;
+        
+        while(!pq.empty()){
+            
+            auto [d,u]=pq.top();
+            pq.pop();
+            
+            if(d < dist[u]) continue;
+            
+            for(auto &nbr:adj[u]){
+                int v=nbr.first;
+                int w=nbr.second;
+                
+                if(d+w>dist[v]){
+                    dist[v]=d+w;
+                    pq.push({d+w,v});
+                }
+            }
+        }
+        
+        return;
+    }
+    vector<int> maxDistance(int V, int src, vector<vector<int>> &edges) {
+       
+       
+       vector<vector<p>>adj(V);
+       for(auto &e:edges){
+           int u=e[0];
+           int v=e[1];
+           int w=e[2];
+           
+           adj[u].push_back({v,w});
+       }
+       
+       vector<int>dist(V,INT_MIN);
+       
+       dijkstra(src,adj,dist);
+       
+       return dist;
+    }
+};
