@@ -114,7 +114,7 @@ class Solution {
     }
 };
 
-//(2) Longest path in DAG
+//(2) Longest path in DAG (Using Dijkstra)
 
 class Solution {
   public:
@@ -164,3 +164,76 @@ class Solution {
        return dist;
     }
 };
+
+//Method-02: Optimal using Topological order
+
+class Solution {
+  public:
+  
+      typedef pair<int, int> p;
+
+      void topoOrder(vector<vector<p>>& adj, int node,vector<bool>& vis, stack<int>& st) {
+
+          vis[node] = true;
+
+          for (auto &edge : adj[node]) {
+              int nbr = edge.first;
+
+              if (!vis[nbr]) {
+                  topoOrder(adj, nbr, vis, st);
+              }
+          }
+
+          st.push(node);
+      }
+
+      vector<int> maxDistance(int V, int src, vector<vector<int>>& edges) {
+
+          // Build adjacency list
+          vector<vector<p>> adj(V);
+
+          for (auto &e : edges) {
+              int u = e[0];
+              int v = e[1];
+              int w = e[2];
+
+              adj[u].push_back({v, w});
+          }
+
+          // Topological sort to find the topological order
+          vector<bool> vis(V, false);
+          stack<int> st;
+
+          for (int i = 0; i < V; i++) {
+              if (!vis[i]) {
+                  topoOrder(adj, i, vis, st);
+              }
+          }
+
+          // Distance array
+          vector<int> dist(V, INT_MIN);
+
+          // Source has distance 0
+          dist[src] = 0;
+
+          // Process in topological order
+          while (!st.empty()) {
+
+              int u = st.top();
+              st.pop();
+
+              // Unreachable vertex
+              if (dist[u] == INT_MIN) continue;
+
+              for (auto &edge : adj[u]) {
+
+                  int v = edge.first;
+                  int wt = edge.second;
+
+                  dist[v] = max(dist[v], dist[u] + wt);
+              }
+          }
+
+          return dist;
+      }
+  };
