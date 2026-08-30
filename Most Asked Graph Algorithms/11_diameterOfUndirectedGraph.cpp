@@ -44,7 +44,23 @@ class Solution {
     }
     
     int diameter(int V, vector<vector<int>>& edges) {
-        // Code here
+        //Making adjacency list from the parent array
+        int V = A.size();
+        vector<vector<int>> adj(V);
+        int root = -1;
+    
+        for (int i = 0; i < V; i++) {
+    
+            if (A[i] == -1) {
+                root = i;
+            }
+            else {
+                adj[i].push_back(A[i]);
+                adj[A[i]].push_back(i);
+            }
+        }
+
+        //Making Adjacency list from the edges
         vector<vector<int>>adj(V);
         for(int i=0;i<edges.size();i++){
             int u=edges[i][0];
