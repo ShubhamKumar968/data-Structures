@@ -66,40 +66,6 @@ class Solution {
        
     }
     
-    //Method-01: BFS
-    void bfs(Node* root, vector<int>&res){
-        
-        // Critical Edge Case: Handling empty tree
-        if (root == nullptr) {
-            return ;
-        }
-        
-        queue<Node*> q;
-        q.push(root);
-        
-        while (!q.empty()) {
-            int n = q.size();
-            
-            //The first node encountered at this level is the left-view node
-            res.push_back(q.front()->data);
-            
-            while (n--) {
-                Node* curr = q.front();
-                q.pop();
-                
-                if (curr->left) {
-                    q.push(curr->left);
-                }
-                
-                if (curr->right) {
-                    q.push(curr->right);
-                }
-            }
-        }
-        
-        return;
-    }
-    
     vector<int> leftView(Node *root) {
         // code here
         
