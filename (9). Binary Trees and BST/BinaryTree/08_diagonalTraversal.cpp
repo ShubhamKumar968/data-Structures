@@ -15,9 +15,11 @@ class Node {
     }
 };
 
+//(1) Diagonal order Traversal
 
 class Solution {
   public:
+
   //For Diagonal Traversal, think of it in terms of a Diagonal Distance (DD):The root starts at DD = 0.
   //When you go Right: You stay on the same diagonal line. So, the distance does not change.
   //When you go Left:  You drop down to the next diagonal line. So, the distance increases by 1.
@@ -60,5 +62,47 @@ class Solution {
         }
         
         return res;
+    }
+};
+
+//(2) Diagonal Sum inn Binary Tree
+
+class Solution {
+  public:
+    
+    vector<int>res;
+    void solve(Node* root){
+        
+        map<int,int>mp;
+        queue<pair<Node*, int>>q;
+        
+        q.push({root,0});
+        
+        while(!q.empty()){
+            
+            auto [curr,dd]=q.front();
+            q.pop();
+            
+            mp[dd]+=curr->data;
+            
+            if(curr->left){
+                q.push({curr->left,dd+1});
+            }
+            
+            if(curr->right){
+                q.push({curr->right,dd});
+            }
+        }
+        
+        
+        for(auto &it: mp){
+            res.push_back(it.second);
+        }
+    }
+    vector<int> diagonalSum(Node* root) {
+        
+        solve(root);
+        return res;
+        
     }
 };
