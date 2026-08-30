@@ -15,10 +15,11 @@ class Node {
     }
 };
 
+//(1) Vertical Order Traversal
+
 class Solution {
   public:
     vector<vector<int>> verticalOrder(Node *root) {
-        // code here
         
         vector<vector<int>>res;
         if (root == NULL) return res;
@@ -41,8 +42,7 @@ class Solution {
             mp[hd].push_back(node->data);
             
             
-            // STEP 4: Standard BFS expansion.
-            // Left child shifts position left (hd - 1).
+            // STEP 4: Standard BFS expansion. Left child shifts position left (hd - 1).
             if(node->left){
                 q.push({node->left,hd-1});
             }
@@ -58,5 +58,45 @@ class Solution {
         
         return res;
         
+    }
+};
+
+//(2) Find the sum of nodes on each vertical line 
+
+class Solution {
+  public:
+  
+  
+    vector<int>res;
+    void solve(Node* root){
+        
+        map<int,int>mp;
+        queue<pair<Node*,int>>q;
+        q.push({root,0});
+        
+        while(!q.empty()){
+            
+            auto [node,hd]=q.front();
+            q.pop();
+            
+            mp[hd] += node->data;
+            
+            if(node->left){
+                q.push({node->left,hd-1});
+            }
+            
+            if(node->right){
+                q.push({node->right,hd+1});
+            }
+            
+        }
+        
+        for(auto &it:mp){
+            res.push_back(it.second);
+        }
+    }
+    vector<int> verticalSum(Node* root) {
+         solve(root);
+         return res;
     }
 };
