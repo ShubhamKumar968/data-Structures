@@ -100,3 +100,44 @@ class Solution {
          return res;
     }
 };
+
+//(3) Vertical width of a binary tree
+
+class Solution {
+  public:
+    
+    int res=0;
+    void solve(Node* root){
+        
+        if (root == nullptr) return ;
+        
+        set<int> st;
+        queue<pair<Node*,int>>q;
+        q.push({root,0});
+
+        while(!q.empty()){
+
+            auto [node,hd]=q.front();
+            q.pop();
+
+            st.insert(hd);
+
+            if(node->left){
+                q.push({node->left,hd-1});
+            }
+
+            if(node->right){
+                q.push({node->right,hd+1});
+            }
+
+        }
+
+        res=st.size();
+    }
+    
+    int verticalWidth(Node* root) {
+        solve(root);
+        return res;
+        
+    }
+};
