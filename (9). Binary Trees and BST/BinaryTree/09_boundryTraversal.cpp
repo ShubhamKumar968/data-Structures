@@ -17,69 +17,104 @@ class Node {
 
 class Solution {
   public:
-    
-    void traverseLeft(Node *root, vector<int>& res) {
-        if (root == NULL) return;
+  
+    vector<int>res;
+    void leftBoundry(Node*root){
         
-        // Leaf is not included
-        if (root->left == NULL && root->right == NULL) return;
+        Node* curr= root;
         
-        res.push_back(root->data); // Preorder style
-        
-        if (root->left) {
-            traverseLeft(root->left, res);
-        } else {
-            traverseLeft(root->right, res);
+        while(curr!=NULL){
+            
+            if(!(curr->left==NULL && curr->right==NULL)){
+                res.push_back(curr->data);
+            }
+            
+            if(curr->left){
+                curr=curr->left;
+            }else{
+                curr=curr->right;
+            }
+           
+            
         }
     }
     
-    void traverseLeaf(Node *root, vector<int>& res) {
-        if (root == NULL) return;
+    void leaf(Node* root){
         
-        // Leaf is included
-        if (root->left == NULL && root->right == NULL) {
+        if(root==NULL){
+            return;
+        }
+        
+        if(root->left==NULL && root->right==NULL){
             res.push_back(root->data);
             return;
         }
         
-        // FIX: Traversal must explore BOTH sides independently to find all leaves
-        traverseLeaf(root->left, res);
-        traverseLeaf(root->right, res);
-    }
-    
-    void traverseRight(Node *root, vector<int>& res) {
-        if (root == NULL) return;
-        
-        // Leaf is not included
-        if (root->left == NULL && root->right == NULL) return;
-        
-        if (root->right) {
-            traverseRight(root->right, res);
-        } else {
-            traverseRight(root->left, res);
+        if(root->left){
+            leaf(root->left);
         }
         
-        res.push_back(root->data); // Postorder style handles bottom-to-top reversal
+        if(root->right){
+            leaf(root->right);
+        }
+        
+    }
+    
+    void rightBoundry(Node* root){
+        
+        vector<int>temp;
+        
+        Node* curr=root;
+        
+        while(curr!=NULL){
+            
+            if(!(curr->left==NULL && curr->right==NULL)){
+                temp.push_back(curr->data);
+            }
+            
+            if(curr->right){
+                curr=curr->right;
+            }else{
+                curr=curr->left;
+            }
+        
+           
+        }
+        
+        reverse(temp.begin(),temp.end());    
+        
+        for(auto &x: temp){
+            res.push_back(x);
+        }
+        
     }
     
     vector<int> boundaryTraversal(Node *root) {
-        vector<int> res;
-        if (root == NULL) return res;
         
-        // Push the root node first
+        if(root==NULL) return {};
+        
+        //Step-0: Push the root node into the result array
         res.push_back(root->data);
+
+        //Step-1: Push the left child in the result vector.
+        if(root->left){
+            leftBoundry(root->left);
+        }        
         
-        // If the tree only has one node, return immediately to prevent duplicate tracking
-        if (root->left == NULL && root->right == NULL) return res;
+        // Step-2: Add leaf nodes if the tree has more than one node
         
-        // 1. Process Left Boundary
-        traverseLeft(root->left, res);
+        if(!(root->left == nullptr && root->right == nullptr)){  
+            
+            leaf(root);
+            
+        }            
+        //Step-3: Push all the right child
         
-        // 2. Process All Leaves (starting from root keeps it clean)
-        traverseLeaf(root, res);
+        if(root->right){
+            rightBoundry(root->right);
+        }
         
-        // 3. Process Right Boundary
-        traverseRight(root->right, res);
+        //Step-4: Return the Boundry Order Traversal as it stored in the res vector
         
         return res;
     }
