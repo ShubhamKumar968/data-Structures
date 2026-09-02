@@ -2,6 +2,8 @@
 using namespace std;
 #include<bits/stdc++.h>
 
+//(1) Length of Longest cycle in directed graph -> Use DFS
+
 class Solution {
   public:
     void dfs(vector<vector<int>>&adj,int node,int &maxLen,vector<int>&depth
@@ -28,7 +30,7 @@ class Solution {
         return;
     }
     int longestCycle(int V, vector<vector<int>>& edges) {
-        // code here
+        
         vector<vector<int>>adj(V);
         for(auto&e:edges){
             int u=e[0];
@@ -50,5 +52,64 @@ class Solution {
         }
         
         return maxLen;
+    }
+};
+
+
+//(2) Length of Shortest cycle in Undirected graph -> Use BFS
+
+
+class Solution {
+public:
+
+    int shortCycle(int V, vector<vector<int>>& edges) {
+
+        vector<vector<int>> adj(V);
+
+        for (auto &e : edges) {
+            int u = e[0];
+            int v = e[1];
+
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+
+        int mini = INT_MAX;
+
+        // BFS from every vertex
+        for (int src = 0; src < V; src++) {
+
+            vector<int> dist(V, -1);
+            vector<int> parent(V, -1);
+
+            queue<int> q;
+
+            dist[src] = 0;
+            q.push(src);
+
+            while (!q.empty()) {
+
+                int node = q.front();
+                q.pop();
+
+                for (int nbr : adj[node]) {
+
+                    // Not visited yet
+                    if (dist[nbr] == -1) {
+                        dist[nbr] = dist[node] + 1;
+                        parent[nbr] = node;
+                        q.push(nbr);
+                    }
+
+                    // Already visited and not the parent
+                    else if (parent[node] != nbr) {
+                        int cycleLength = dist[node] + dist[nbr] + 1;
+                        mini = min(mini, cycleLength);
+                    }
+                }
+            }
+        }
+
+        return mini == INT_MAX ? -1 : mini;
     }
 };
