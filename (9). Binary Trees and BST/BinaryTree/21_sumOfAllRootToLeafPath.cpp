@@ -18,31 +18,39 @@ class Node {
 
 class Solution {
   public:
-   
-    int solve(Node* root,int curr){
+    typedef long long ll;
+    
+    ll res=0;
+    void solve(Node* root, ll path){
+        
         if(root==NULL){
-            return 0;
+            return;
         }
         
-        curr=curr*10+(root->data);
+        path=path*10 + root->data;
         
-        if(root->left== NULL && root->right==NULL){//leaf node par aane par curr path sum return karo
-            return curr;
+        if(root->left==NULL && root->right==NULL){
+            res+=path;
         }
         
-        int left=solve(root->left,curr);
-        int right=solve(root->right,curr);
+        solve(root->left,path);
+        solve(root->right,path);
         
-        return left+right;
+        return;
     }
     int treePathsSum(Node *root) {
-        // code here.
-        int curr=0;
-        return solve(root,curr);
+        
+        ll path=0;
+        
+        solve(root,path);
+        return res;
+        
+        
     }
 };
-
 //(2). Find maximum root to leaf path sum
+
+
 
 class Solution {
   public:
