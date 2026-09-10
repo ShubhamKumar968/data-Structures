@@ -2,6 +2,8 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+//(1) Find Wheather word exist in the grid
+
 class Solution {
   public:
     
@@ -60,6 +62,50 @@ class Solution {
         return false;
     }
 };
+
+//(2) find all the word in the grid by traversing in any single direction only
+
+class Solution {
+  public:
+    int m,n;
+    vector<vector<int>>dir={{1,0},{0,1},{-1,0},{0,-1},{1,1},{-1,-1},{-1,1},{1,-1}};
+    bool dfs(vector<vector<char>> &grid,int i, int j, int idx, string &word,int ni,int nj){
+        
+        if(idx==word.size()) {
+            return true;
+        }
+        
+        if(i<0 || i>=m || j<0 || j>=n || grid[i][j]=='$' || grid[i][j]!=word[idx]){
+            return false;
+        }
+        
+        // Continue in the SAME direction
+        return dfs(grid, i + ni, j + nj, idx + 1, word, ni, nj);
+    }
+    
+    vector<vector<int>> searchWord(vector<vector<char>> &grid, string &word) {
+        
+        m=grid.size();
+        n=grid[0].size();
+        
+        vector<vector<int>>res;
+        
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                
+                for(auto &d:dir){
+                    
+                    if(dfs(grid,i,j,0,word,d[0], d[1])){
+                        res.push_back({i, j});
+                        break; // don't add same starting cell again
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
+
 
 //Time Complexity: O(n * m * 3^k)
 //Auxiliary Space: O(k)
