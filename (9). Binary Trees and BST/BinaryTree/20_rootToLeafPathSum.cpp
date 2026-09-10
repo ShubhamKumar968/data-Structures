@@ -28,11 +28,7 @@ class Solution {
         sum+=root->val;
         
         if(root->left== NULL && root->right==NULL){
-            if(sum==target){
-                return true;
-            }else{
-                return false;
-            }
+            return sum==target;
         }
         
         bool left=solve(root->left,target,sum);
@@ -42,7 +38,7 @@ class Solution {
     }
 
     bool hasPathSum(TreeNode *root, int target) {
-        // Your code here
+        
         int sum=0;
         return solve(root,target,sum);
     }
@@ -52,37 +48,37 @@ class Solution {
 
 class Solution {
 public:
+
     vector<vector<int>>res;
-    void solve(TreeNode* root, int target,int sum,vector<int>path){
-        //inorder traversal
+    void solve(TreeNode* root, int target,vector<int>path){
+
         if(root==NULL){
-            return ;
-        }
-        
-        sum+=root->val;
-        path.push_back(root->val);
-        
-        if(root->left== NULL && root->right==NULL){//leaf
-            if(sum==target){
-                res.push_back(path);
-            }
             return;
         }
-        
-        solve(root->left,target,sum,path);
-        solve(root->right,target,sum,path);
-        
+
+        path.push_back(root->val);
+        target-=root->val;
+
+        if(root->left==NULL && root->right==NULL){//Leaf Node
+            if(target==0){
+               res.push_back(path);
+            }
+            
+        }
+
+        solve(root->left,target,path);
+        solve(root->right,target,path);
+
         return;
     }
-
     vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
-        vector<int>path;
-        int sum=0;
-        solve(root,targetSum,sum,path);
-        return res;
+      
+         vector<int>path;
+         solve(root,targetSum,path);
+
+         return res;
     }
 };
-
 
 //(3)Find all path from root to any nodes with specified sum
 
