@@ -19,77 +19,88 @@ class Node {
 
 class Solution {
   public:
-    int minTime(Node* root, int target) {
-        // code here
+
+    unordered_map<Node*, Node*> parent;
+    Node* targetNode = nullptr;
+
+    //Step-1: Find target and store parent of every node to create graph
+    void findParent(Node* root, int target) {
         
-        // Step 1: Parent mapping of every node to create graph
-        unordered_map<Node*, Node*> parent;
-        Node* targetNode = NULL;
+        if (root == NULL)
+            return;
+
+        if (root->data == target)
+            targetNode = root;
+
+        if (root->left) {
+            parent[root->left] = root;
+            findParent(root->left, target);
+        }
+
+        if (root->right) {
+            parent[root->right] = root;
+            findParent(root->right, target);
+        }
+
+    }
+
+  //Step-02: Apply BFS From the Target
+
+    int bfs(Node* root){
         
-        queue<Node*> q;
-        q.push(root);
+        unordered_set<Node*>vis;
+        queue<Node*>q;
+        q.push(targetNode);
+        vis.insert(targetNode);
+        
+        int times=0;
         
         while(!q.empty()){
-            Node* curr = q.front(); q.pop();
             
-            if(curr->data == target){
-                targetNode = curr;
-            }
-            
-            if(curr->left){
-                parent[curr->left] = curr;
-                q.push(curr->left);
-            }
-            if(curr->right){
-                parent[curr->right] = curr;
-                q.push(curr->right);
-            }
-        }
-        
-        // Step 2: apply BFS from target
-        unordered_map<Node*, bool> vis;
-        queue<Node*> burn;
-        
-        burn.push(targetNode);
-        vis[targetNode] = true;
-        
-        int times = 0;
-        
-        while(!burn.empty()){
-            
-            int n = burn.size();//current level size
-            bool burned = false;
-            
-            while(n--){
-                // Traverse all neighbors (left child, right child, and parent)
-                Node* curr = burn.front(); 
-                burn.pop();
-                
+            int N=q.size();//current level size
+            bool isBurned=false;
+            while(N--){
+                 // Traverse all neighbors (left child, right child, and parent)
+                Node* curr=q.front();
+                q.pop();
+
                 // left
-                if(curr->left && !vis[curr->left]){
-                    burn.push(curr->left);
-                    vis[curr->left] = true;
-                    burned = true;
+                if(curr->left && !vis.count(curr->left)){
+                    q.push(curr->left);
+                    vis.insert(curr->left);
+                    isBurned=true;
                 }
-                
-                // right
-                if(curr->right && !vis[curr->right]){
-                    burn.push(curr->right);
-                    vis[curr->right] = true;
-                    burned = true;
+
+               // right
+                if(curr->right && !vis.count(curr->right)){
+                    q.push(curr->right);
+                    vis.insert(curr->right);
+                    isBurned=true;
                 }
-                
                 // parent
-                if(parent[curr] && !vis[parent[curr]]){
-                    burn.push(parent[curr]);
-                    vis[parent[curr]] = true;
-                    burned = true;
+                if(parent.count(curr) && !vis.count(parent[curr])){
+                    q.push(parent[curr]);
+                    vis.insert(parent[curr]);
+                    isBurned=true;
                 }
                 
             }
             // If fire spread to any new nodes during this second, increment the time counter
-            if(burned==true) times++;
+            if(isBurned) times++;
         }
+        
         return times;
+   }
+
+
+    int minTime(Node* root, int target) {
+       
+        
+        // Step 1: Parent mapping of every node to create graph
+        findparent(root,target);
+
+        //Step-02: Apply BFS From Target to find times
+
+        return bfs(root);
     }
 };
