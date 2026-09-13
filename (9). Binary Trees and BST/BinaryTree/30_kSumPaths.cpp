@@ -16,40 +16,34 @@ class Node {
 
 class Solution {
   public:
-    int totalPaths = 0;
-    unordered_map<int, int> prefixSumCount;
-
-    void dfs(Node* root, int currentSum, int k) {
-        if (root == nullptr) return;
-
-        // 1. Add current node's data to the running prefix sum
-        currentSum += root->data;
-
-        // 2. Check if a valid sub-path ending at this node sums to k
-        if (prefixSumCount.count(currentSum - k)) {
-            totalPaths += prefixSumCount[currentSum - k];
+  
+    unordered_map<int,int>mp;
+    int count=0;
+    void solve(Node* root, int k, int presum){
+        
+        if(root==NULL) return;
+        
+        presum+=root->data;
+        
+        // Check if there is a previous prefix sum such that currentSum - previousSum = k
+        if(mp.count(presum-k)){
+            count+=mp[presum-k];
         }
-
-        // 3. Add the current prefix sum to the map so children can use it
-        prefixSumCount[currentSum]++;
-
-        // 4. Recurse down to explore deeper levels
-        dfs(root->left, currentSum, k);
-        dfs(root->right, currentSum, k);
-
-        // 5. BACKTRACK: Remove current prefix sum before moving to a sibling branch
-        prefixSumCount[currentSum]--;
+        
+        mp[presum]++;
+        
+        solve(root->left,k,presum);
+        solve(root->right,k,presum);
+        
+        mp[presum]--; // Backtrack
     }
     
     int countAllPaths(Node *root, int k) {
-        // code here
-        totalPaths = 0;
-        prefixSumCount.clear();
         
-        // Base Case for Prefix Sum: A sum of 0 always exists initially (empty path)
-        prefixSumCount[0] = 1; 
+        int presum=0;
+        mp[0]=1;
+        solve(root,k,presum);
+        return count;
         
-        dfs(root, 0, k);
-        return totalPaths;
     }
 };
