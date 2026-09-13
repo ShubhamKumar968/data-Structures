@@ -56,3 +56,43 @@ class Solution {
         return solve(preorder,inorder,idx,0,n-1);
     }
 };
+
+//Method-02: Optimal O(n)
+
+class Solution {
+public:
+
+    unordered_map<int, int> mp;
+    int idx = 0;
+
+    Node* solve(vector<int>& preorder, int st, int end) {
+
+        if (st > end) return NULL;
+
+        int rootVal = preorder[idx];
+        idx++;
+        
+        int pos = mp[rootVal];
+        
+        
+        Node* root = new Node(rootVal);
+        root->left = solve(preorder, st, pos - 1);
+        root->right = solve(preorder, pos + 1, end);
+
+        return root;
+    }
+
+    Node* buildTree(vector<int>& inorder, vector<int>& preorder) {
+
+        int n = inorder.size();
+
+        // Store position of every value in inorder
+        for (int i = 0; i < n; i++) {
+            mp[inorder[i]] = i;
+        }
+
+        idx = 0;
+
+        return solve(preorder, 0, n - 1);
+    }
+};
