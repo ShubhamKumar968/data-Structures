@@ -16,20 +16,30 @@ class TreeNode {
 
 class Solution {
 public:
-    int solve(TreeNode* root, int mini, int maxi){
+    class Solution {
+public:
+
+    int maxDiff=0;
+    void solve(TreeNode* root, int mini, int maxi){
         if(root==NULL){
-            return abs(maxi-mini);
+            return;
         }
-        
+
+        maxDiff=max({maxDiff, abs(root->val-maxi), abs(root->val-mini)});
+
         maxi=max(maxi,root->val);
-        mini=min(mini, root->val);
-        
-        int l= solve(root->left,mini,maxi);
-        int r= solve(root->right, mini,maxi);
-        
-        return max(l,r);
+        mini=min(root->val,mini);
+
+        solve(root->left,mini,maxi);
+        solve(root->right,mini,maxi);
+
+        return;
+
     }
     int maxAncestorDiff(TreeNode* root) {
-        return solve(root,INT_MAX,INT_MIN);
+       
+       solve(root,root->val,root->val);
+
+       return maxDiff;
     }
 };
