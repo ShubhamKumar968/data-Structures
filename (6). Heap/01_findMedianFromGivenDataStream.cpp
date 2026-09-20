@@ -30,54 +30,48 @@ class Solution {
     }
     
 //Method-02 Optimal ( Using max & min Heap )  => O(N* logN)
-    vector<double>optimal(vector<int> &arr){
+class MedianFinder {
+public:
+
+    priority_queue<int>left;//maxHeap (store smaller half)
+    priority_queue<int,vector<int>,greater<int>>right;//minHeap (store larger half)
+
+    MedianFinder() {
         
-        vector<double> result;
-        priority_queue<int>max;//Max Heap (left side) → stores smaller half
-        priority_queue<int,vector<int>, greater<>>min;//Min Heap (right side) → stores larger half
-        
-        for(auto &num: arr){
-            
-            //step-1 (Insert element in heap)
-            
-            if(max.empty() || num <= max.top()){
-                max.push(num);
-            }else{
-                min.push(num);
-            }
-            
-            //step-2 (balance both heap)
-            
-            if(max.size() > min.size() +1){
-                min.push(max.top());
-                max.pop();
-            }else if(min.size() > max.size() ){
-                max.push(min.top());
-                min.pop();
-            }
-            
-            //step-3 (calculate and return median)
-            
-            if(min.size()==max.size()){
-                
-                double median= ( min.top() + max.top() )/2.0;
-                result.push_back(median);
-                
-            }else{
-                result.push_back(max.top());
-            }
-            
-        }
-    
-        return result;
     }
     
-    vector<double> getMedian(vector<int> &arr) {
-        // code here
-       return solve(arr);
-       
-       return optimal(arr);
+    void addNum(int num) {
+
+        // 1. Decide which heap gets num
+
+        if( left.empty() || num<=left.top()){
+           left.push(num);
+        }
+        else{
+            right.push(num);
+        }
+
+        // 2. Balance the two heaps
+        
+        if(left.size() > right.size()+1){
+            right.push(left.top());
+            left.pop();
+        }
+        else if(right.size() > left.size() ){
+            left.push(right.top());
+            right.pop();
+        }
+    }
+    
+    double findMedian() {
+        
+       //1. same size?
+       if(left.size()==right.size()){
+          double median= (left.top() + right.top())/2.0;
+          return median;
+       }
+
+       //2. maxHeap has one extra?
+       return left.top();
     }
 };
-
-    
