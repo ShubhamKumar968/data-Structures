@@ -1,22 +1,19 @@
-#include<iostream>
-using namespace std;
-#include<bits/stdc++.h>
-
 class Solution {
   public:
+    typedef pair<int,int> p;
     
-    typedef pair<int, vector<int>>p;
     vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
-        // code here
         
-        priority_queue<p>pq;//Max heap to maintain heap of size k
-        for(auto &ele:points){
-            int x=ele[0];
-            int y=ele[1];
+        priority_queue<p>pq;
+        
+        int n=points.size();
+        
+        for(int i=0;i<n;i++){
             
-            int dist= (x*x)+(y*y);
+            int x=points[i][0];
+            int y=points[i][1];
             
-            pq.push({dist,{x,y}});
+            pq.push({x*x+y*y,i});
             
             while(pq.size()>k){
                 pq.pop();
@@ -24,13 +21,13 @@ class Solution {
         }
         
         vector<vector<int>>res;
-        while(!pq.empty()){
-            res.push_back(pq.top().second);
-            pq.pop();
-        }
         
-        //Because we have to return result in increasing order of distances and we have used max heap
-        reverse(res.begin(),res.end());
+        while(!pq.empty()){
+            int idx=pq.top().second;
+            pq.pop();
+            res.push_back(points[idx]);
+            
+        }
         
         return res;
     }
