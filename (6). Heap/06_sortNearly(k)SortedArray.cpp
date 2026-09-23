@@ -34,7 +34,7 @@ class Solution {
         
         // Insert the first k + 1 elements 
         // Min-heap size will be at most k + 1(due to elements are atmost k- position away)
-        for (int i = 0; i <= min(k, n - 1); i++) {
+        for (int i = 0; i <= k; i++) {
             pq.push(arr[i]);
         }
         
