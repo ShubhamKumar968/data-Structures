@@ -65,7 +65,7 @@ class Solution {
     }
 };
 
-//(2) Diagonal Sum inn Binary Tree
+//(2) Diagonal Sum in Binary Tree
 
 class Solution {
   public:
@@ -104,5 +104,33 @@ class Solution {
         solve(root);
         return res;
         
+    }
+};
+
+//Method-02: Using Recursion:
+
+
+class Solution {
+  public:
+  
+    void preorder(Node *root, int d, map<int,vector<int>>&mp){
+        
+        if(!root) return;
+        mp[d].push_back(root->data);
+        preorder(root->left,d+1,mp);
+        preorder(root->right,d,mp);
+    }
+    
+    vector<int> diagonal(Node *root) {
+        
+        map<int,vector<int>>mp;
+        preorder(root,0,mp);
+
+        vector<int>ans;
+        for(auto d:mp){
+            for(auto it:d.second) ans.push_back(it);
+        }
+        
+        return ans;
     }
 };
