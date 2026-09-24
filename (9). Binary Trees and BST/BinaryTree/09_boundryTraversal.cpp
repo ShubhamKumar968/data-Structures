@@ -15,80 +15,51 @@ class Node {
     }
 };
 
+
 class Solution {
   public:
-  
+
     vector<int>res;
-    void leftBoundry(Node*root){
+
+    void leftBoundary(Node* root){
         
-        Node* curr= root;
-        
-        while(curr!=NULL){
-            
-            if(!(curr->left==NULL && curr->right==NULL)){
-                res.push_back(curr->data);
-            }
-            
-            if(curr->left){
-                curr=curr->left;
-            }else{
-                curr=curr->right;
-            }
-           
-            
-        }
-    }
-    
-    void leaf(Node* root){
-        
-        if(root==NULL){
-            return;
-        }
-        
+        if (root == NULL) return;
         if(root->left==NULL && root->right==NULL){
-            res.push_back(root->data);
-            return;
+            return ;
         }
-        
-        if(root->left){
-            leaf(root->left);
-        }
-        
-        if(root->right){
-            leaf(root->right);
-        }
-        
+
+        res.push_back(root->data);
+
+        if(root->left) leftBoundary(root->left);
+        else leftBoundary(root->right);
     }
-    
-    void rightBoundry(Node* root){
-        
-        vector<int>temp;
-        
-        Node* curr=root;
-        
-        while(curr!=NULL){
-            
-            if(!(curr->left==NULL && curr->right==NULL)){
-                temp.push_back(curr->data);
-            }
-            
-            if(curr->right){
-                curr=curr->right;
-            }else{
-                curr=curr->left;
-            }
-        
-           
+
+    void rightBoundary(Node* root, vector<int>&temp){
+      
+        if (root == NULL) return;
+        if(root->left==NULL && root->right==NULL){
+            return ;
         }
-        
-        reverse(temp.begin(),temp.end());    
-        
-        for(auto &x: temp){
-            res.push_back(x);
-        }
-        
+
+        temp.push_back(root->data);
+
+        if(root->right) rightBoundary(root->right,temp);
+        else rightBoundary(root->left,temp);
     }
-    
+
+    void leafNodes(Node* root){
+
+        if (root == NULL) return;
+
+        if(root->left==NULL && root->right==NULL){
+           res.push_back(root->data);
+           return;
+        }
+
+        if(root->left) leafNodes(root->left);
+        if(root->right) leafNodes(root->right);
+    }
+
     vector<int> boundaryTraversal(Node *root) {
         
         if(root==NULL) return {};
@@ -105,14 +76,18 @@ class Solution {
         
         if(!(root->left == nullptr && root->right == nullptr)){  
             
-            leaf(root);
+            leafNodes(root);
             
         }            
         //Step-3: Push all the right child
-        
+        vector<int>temp;
         if(root->right){
-            rightBoundry(root->right);
+            rightBoundry(root->right,temp);
         }
+
+        reverse(temp.begin(),temp.end());//for reverse order
+
+        for(auto &x: temp) res.push_back(x);
         
         //Step-4: Return the Boundry Order Traversal as it stored in the res vector
         
