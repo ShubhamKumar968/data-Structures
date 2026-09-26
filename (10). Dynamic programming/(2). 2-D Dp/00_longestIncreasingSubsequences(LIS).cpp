@@ -53,39 +53,11 @@ class Solution {
         return  maxLen;
     }
 
-
-//Method-03:- using patience sorting O(nlogn)
-    int optimal(vector<int>& arr) {
-        
-        int n = arr.size();
-        if (n == 0) return 0;
-    
-        vector<int> tails;
-    
-        for (int x : arr) {
-            // lower_bound uses binary search to find the first element >= x
-            auto it = lower_bound(tails.begin(), tails.end(), x);//O(logn)
-    
-            if (it == tails.end()) {
-                // x is larger than any current tail, extend the LIS
-                tails.push_back(x);
-            } else {
-                // Replace the found element with x to keep the tail as small as possible
-                *it = x;
-            }
-        }
-    
-        return tails.size();
-    }
-    
     int lis(vector<int>& arr) {
         // code here
         int n=arr.size();
         memset(t,-1,sizeof(t));
-        //return solve(arr,0,-1,n);
-        //return bottomUp(arr);
-        //return bottomUp2(arr);
-        return optimal(arr);
+        return solve(arr,0,-1,n);
     }
 };
 
