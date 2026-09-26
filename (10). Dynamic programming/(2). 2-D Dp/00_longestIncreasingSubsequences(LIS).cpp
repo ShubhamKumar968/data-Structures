@@ -32,25 +32,25 @@ class Solution {
 //Method-02:- Space Optimized Bottom Up (O(n*n))
 
     int LIS(vector<int>&arr){
+      
         int n=arr.size();
         if (n == 0) return 0;
-        // dp[i] stores the length of LIS ending at index i
-        // Every element is an LIS of length 1 by itself
-        vector<int>dp(n+1,1);
-        int maxLen=1;
-        
+        // dp[i] stores the length of LIS ending at index i ; Every element is an LIS of length 1 by itself
+        int n=arr.size();
+        vector<int>dp(n,1);
+        int lis=0;
+      
         for(int i=0;i<n;i++){
-            for(int j=i-1;j>=0;j--){
+            for(int j=0;j<i;j++){
+              
                 if(arr[i]>arr[j]){
-                   // If current element is greater, try to extend the sequence
-                    dp[i]= max(dp[i],1+ dp[j]);
+                    dp[i]=max(dp[i],1+dp[j]);
                 }
             }
-            
-            maxLen=max(maxLen,dp[i]);
+          
+            lis=max(lis,dp[i]);
         }
-        
-        return  maxLen;
+        return lis;
     }
 
     int lis(vector<int>& arr) {
