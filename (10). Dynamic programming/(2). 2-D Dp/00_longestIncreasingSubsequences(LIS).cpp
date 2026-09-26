@@ -105,32 +105,3 @@ class Solution {
         return LIS(arr);
     }
 };
-
-//(3) Longest Arithmetic Subsequence
-
-int lis(vector<int>&arr){
-        int n=arr.size();
-        // dp[i][d] stores the length of the arithmetic subsequence ending at index i with difference d
-        vector<unordered_map<int, int>> dp(n);
-        //dp[2]->{ 3 : 3 } (Index 2 par store ho gaya ki common difference 3 ke saath LAS ki length 3 hai)
-        int maxLen = 1; 
-        
-        for(int i=0;i<n;i++){
-            for(int j=i-1;j>=0;j--){
-                
-                int d=arr[i]-arr[j];//common difference
-                
-                if(dp[j].count(d)){
-                    dp[i][d]= max(dp[i][d],1+ dp[j][d]);
-                }else{
-                    // A valid arithmetic subsequence with a difference must have at least 2 elements
-                    dp[i][d]= max(dp[i][d], 2);
-                }
-                
-                
-                maxLen=max(maxLen,dp[i][d]);
-            }
-        }
-        
-        return  maxLen;
-    }
