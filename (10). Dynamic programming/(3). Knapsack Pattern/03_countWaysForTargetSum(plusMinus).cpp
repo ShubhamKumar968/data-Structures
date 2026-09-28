@@ -16,11 +16,9 @@ class Solution {
 
     int t[51][2001];//offset=1000
     int solve(vector<int>& arr, int target,int n){
+      
         if(n==0){
-            if(target==0){
-                return 1;
-            }
-            return 0;
+            return target==0;
         }
         
         if(t[n][target+1000]!=-1) return t[n][target+1000];
