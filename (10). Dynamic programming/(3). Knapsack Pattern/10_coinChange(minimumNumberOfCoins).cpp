@@ -4,29 +4,35 @@ using namespace std;
 
 class Solution {
   public:
+
   //Method-01: Memoization  
-    int memo(vector<int>& coins, int sum,int n, vector<vector<int>>&t){
-       // SUCCESS: Target achieved. 0 more coins are needed to reach the goal.
-        if (sum == 0) return 0; 
+
+     int solve(vector<int>& coins, int sum, int n,vector<vector<int>>&t){
+            
+            if(sum==0) return 0;
+            
+            if(n==0){
+                return 1e9;
+            }
+            
+            if(t[n][sum]!=-1){
+                return t[n][sum];
+            }
+            
+            int take=1e9;
+            if(sum-coins[n-1]>=0) take=1+solve(coins,sum-coins[n-1],n,t);
+
+            int skip= solve(coins,sum,n-1,t);
+            
+            return t[n][sum]= min(take,skip);
+    }
     
-        // FAILURE: Target missed or out of options. 
-        // Return a massive value so min() will ignore this path.
-        if (sum < 0 || n == 0) return 1e9; 
-    
-        if (t[n][sum] != -1) return t[n][sum];
-    
-        int take = 1e9;
-        if (coins[n - 1] <= sum) {
-            // DECISION: If we take, we add +1 to the TOTAL COUNT of coins used.
-            take = 1 + memo(coins, sum - coins[n - 1], n, t);
-        }
-    
-        // DECISION: If we skip, the count of coins doesn't change.
-        int skip = memo(coins, sum, n - 1, t);
-    
-        // GOAL: Pick the path with the SHORTEST length (fewest coins).
-        return t[n][sum] = min(take, skip);
+    int minCoins(vector<int> &coins, int sum) {
         
+        int n=coins.size();
+        vector<vector<int>>t(n+1,vector<int>(sum+1,-1));
+        int res=solve(coins,sum,n,t);
+        return res>=1e9 ? -1: res;
     }
 
 //Method-02: Bottom Up
@@ -52,6 +58,7 @@ class Solution {
         }
         return dp[n][sum];
     }
+
     int minCoins(vector<int> &coins, int sum) {
         // code here
         int n=coins.size();
