@@ -2,35 +2,41 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Solution {
-  public:
-
 // Complexity: O(n * sum)
 //Method-01: Memoization(Top down)
 
+  class Solution {
+  public:
+  
     int t[1001][1001];
-    int memo(vector<int>& coins, int sum,int n){
-        // SUCCESS: One valid way found! Return 1 to represent this unique path.
-        if (sum == 0) return 1; 
-    
-        // FAILURE: No way to complete this specific path. Return 0.
-        if (sum < 0 || n == 0) return 0;
-    
-        if (t[n][sum] != -1) return t[n][sum];
-    
-        int take = 0;
-        if (coins[n - 1] <= sum) {
-            // DECISION: How many ways are there if I use this coin?
-            take = memo(coins, sum - coins[n - 1], n);
+    int solve(vector<int>& coins, int sum, int n){
+        
+        if(sum==0){//success case
+            return 1;
         }
-    
-        // DECISION: How many ways are there if I move to the next coin?
-        int skip = memo(coins, sum, n - 1);
-    
-        // GOAL: Total ways is the SUM of all possible branching paths.
-        return t[n][sum] = (take + skip);
-            
+        
+        if(n==0 || sum<0){//failure case
+            return 0;
+        }
+        
+        if (t[n][sum] != -1) return t[n][sum];
+        
+        int take=0;
+        if(sum-coins[n-1]>=0) take=solve(coins,sum-coins[n-1],n);
+        
+        int skip= solve(coins,sum,n-1);
+        
+        return t[n][sum]=take+skip;
     }
+    
+    int count(vector<int>& coins, int sum) {
+       
+       int n=coins.size();
+       memset(t,-1,sizeof(t));
+       return solve(coins,sum,n);
+       
+    }
+};
 
 //Method-02: Bottom up
 
