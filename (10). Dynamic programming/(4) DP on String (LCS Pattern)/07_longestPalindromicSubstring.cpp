@@ -63,39 +63,57 @@ class Solution {
 //Methosd-03: Expand around center(odd length/ even length)
 
     string expandAroundCenter(string &s) {
+   
         int n = s.length();
-        if (n == 0) return "";
-        
         int maxLen = 0;
-        int startIdx = 0;
-    
-        // Helper function to expand from a given center
-        auto expand = [&](int left, int right) {
-            // Expand as long as characters match and we are within bounds
-            while (left >= 0 && right < n && s[left] == s[right]) {
-                left--;
-                right++;
-            }
-            
-            // After the loop, s[left] and s[right] are the first non-matching characters
-            // The length of the palindrome is: (right - 1) - (left + 1) + 1
-            int currentLen = right - left - 1;
-            
-            if (currentLen > maxLen) {
-                maxLen = currentLen;
-                startIdx = left + 1; // The palindrome starts one index after 'left'
-            }
-        };
-    
+        int stIdx = 0;
+
         for (int i = 0; i < n; i++) {
-            // Case 1: Odd length palindromes (Center is the character at i)
-            expand(i, i);
+
+            // CASE 1: Odd length palindrome
+            // Consider s[i] as the center of the palindrome
+            int l = i, r = i;
+
+            while (l >= 0 && r < n && s[l] == s[r]) {
+                l--;
+                r++;
+            }
+
+            // IMPORTANT:
+            // After the loop, l and r are OUTSIDE the palindrome.
+            // Actual palindrome starts at l+1 and ends at r-1.
+            // Length = (r-1) - (l+1) + 1 = r-l-1
+
+            int len = r - l - 1;
+
+            if (len > maxLen) {
+                maxLen = len;
+
+                // l is outside the palindrome on the left, so actual starting index is l+1.
+                stIdx = l + 1;
+            }
+
+
+            // CASE 2: Even length palindrome
+            // Consider the gap between i and i+1 as the center
+            l = i;
+            r = i + 1;
+
+            while (l >= 0 && r < n && s[l] == s[r]) {
+                l--;
+                r++;
+            }
             
-            // Case 2: Even length palindromes (Center is the gap between i and i+1)
-            expand(i, i + 1);
+            len = r - l - 1;
+
+            if (len > maxLen) {
+                maxLen = len;
+                stIdx = l + 1;
+            }
         }
-    
-        return s.substr(startIdx, maxLen);
+
+        // Extract the longest palindrome using its starting index and its maximum length.
+        return s.substr(stIdx, maxLen);
     }
 
     string getLongestPal(string &s) {
