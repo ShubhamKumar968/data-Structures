@@ -3,6 +3,49 @@
 using namespace std;
 
 
+//(1) Maximum Path Sum
+
+class Solution {
+  public:
+   
+    int solve(int i, int j, int m, int n, vector<vector<int>>& mat) {
+
+        // Out of bounds
+        if(j < 0 || j >= n) {
+            return INT_MIN;
+        }
+
+        // Last row reached
+        if(i == m-1) {
+            return mat[i][j];
+        }
+
+        int left = solve(i+1, j-1, m, n, mat);
+        int down = solve(i+1, j, m, n, mat);
+        int right = solve(i+1, j+1, m, n, mat);
+
+        return mat[i][j] + max({left, down, right});
+    }
+
+    int maximumPath(vector<vector<int>>& mat) {
+
+        int m = mat.size();
+        int n = mat[0].size();
+
+        int maxSum = INT_MIN;
+
+        for(int j = 0; j < n; j++) {
+
+            maxSum = max(maxSum, solve(0, j, m, n, mat));
+
+        }
+
+        return maxSum;
+    }
+};
+
+//(2) Minimum paath sum
+
 class Solution {
 public:
 //Method-01 Recursion and Memoization
