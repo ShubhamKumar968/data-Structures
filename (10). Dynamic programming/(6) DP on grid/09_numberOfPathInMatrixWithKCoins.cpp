@@ -11,14 +11,10 @@ class Solution {
         
         if(i<0 || i>=m || j<0|| j>=n || k<0) return 0;
         
-        int remaining=k-mat[i][j];
+        k=k-mat[i][j];
         
         if(i==m-1 && j==n-1){
-            if(remaining==0){
-                return 1;
-            }else{
-                return 0;
-            }
+            return k==0;
         }
         
         if(t[i][j][k]!=-1) return t[i][j][k];
