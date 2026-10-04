@@ -8,29 +8,41 @@ public:
 //Method-01: Recursion+ Memoization
 
     //Recursion-> O(n^k)
+    const int mod=1e9+7;
     int t[31][1001];
-    const int MOD=1e9+7;
-    int solve(int n, int k, int target) {
 
-        if(target<0){
+    int solve(int n, int k, int target){
+        
+        //when n == 0, you should return 1 only if target == 0.
+        if(n==0){
+            return target==0;
+        }
+        //if target == 0 but there are still dice remaining, you cannot count that as a valid way.
+        if(target<=0){
             return 0;
         }
 
-        if(n==0){
-            if(target==0) return 1;
-            else return 0;
-        }
-        
-        if(t[n][target]!=-1) return t[n][target];
-
-
-        int ways=0;
-        for(int face=1;face<=k;face++){
-            ways=(ways+solve(n-1,k,target-face))%MOD;
+        if(t[n][target]!=-1){
+            return t[n][target];
         }
 
-        return t[n][target]= ways % MOD;
+        int ans=0;
+        for(int i=1;i<=k;i++){
+            ans = (ans + solve(n-1,k,target-i)) % mod;
+        }
+
+        return t[n][target]=ans%mod;
     }
+
+    int numRollsToTarget(int n, int k, int target) {
+
+        memset(t,-1,sizeof(t));
+        return solve(n,k,target);
+
+    }
+};
+
+
 //Method-02: Bottom Up
 
     int bottomUp(int n, int k, int target){
