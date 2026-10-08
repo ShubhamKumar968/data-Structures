@@ -20,7 +20,7 @@ bool matSearch(vector<vector<int>> &mat, int x) {
 
 class Solution {
   public:
-    bool matSearch(vector<vector<int>> &arr, int target) {
+    bool matSearch(vector<vector<int>> &arr, int target) {//start from top right cell
         
         int m=arr.size();
         int n=arr[0].size();
@@ -45,7 +45,7 @@ class Solution {
 
 class Solution {
 public:
-    int countNegatives(vector<vector<int>>& grid) {
+    int countNegatives(vector<vector<int>>& grid) {//start from top-right cell
         int m = grid.size();
         int n = grid[0].size();
         //start from top right corner
@@ -62,6 +62,34 @@ public:
             } else {
                 // This column is not negative, move down
                 i++;
+            }
+        }
+
+        return cnt;
+    }
+};
+
+//(3) count zero in row column sorted matrix in ascending order
+
+class Solution {
+  public:
+    int countZeros(vector<vector<int>>& mat) {//start from left-bottom cell
+        
+        int n = mat.size();
+
+        if (n == 0) return 0;
+ 
+        int i = n - 1;
+        int j = 0;
+        int cnt = 0;
+
+        while (i >= 0 && j < n) {
+            
+            if (mat[i][j] == 0) {
+                cnt += i + 1;
+                j++;
+            } else {
+                i--;
             }
         }
 
