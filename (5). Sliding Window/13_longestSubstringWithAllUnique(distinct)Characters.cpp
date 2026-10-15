@@ -36,3 +36,28 @@ class Solution {
         return maxLen;
     }
 };
+
+//Method-02: Using Set
+
+int longestUniqueSubstr(string &s) {
+    unordered_set<char> st;
+    int n = s.length();
+    int i = 0, j = 0;
+    int maxi = 0; // Initialize to 0 instead of INT_MIN to handle empty strings safely
+
+    while (j < n) {
+        // If s[j] is already in the set, shrink the window from the left
+        while (st.count(s[j])) {
+            st.erase(s[i]);
+            i++;
+        }
+        
+        // Insert the current character and update the maximum length
+        st.insert(s[j]);
+        maxi = max(maxi, j - i + 1);
+        j++;
+    }
+    
+    return maxi;
+}
+
