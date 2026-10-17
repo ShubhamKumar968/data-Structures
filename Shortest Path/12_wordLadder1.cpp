@@ -14,6 +14,7 @@ public:
         // BFS queue storing {current_word, transformation_steps}
         queue<pair<string, int>> q;
         q.push({startWord, 1});
+        dict.erase(startWord);
         
         while (!q.empty()) {
             auto [word, steps] = q.front();
