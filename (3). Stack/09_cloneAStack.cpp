@@ -40,3 +40,46 @@ class Solution {
         return;
     }
 };
+
+
+
+//(2) Asteroid Collision (Leetcode)
+
+class Solution {
+public:
+    vector<int> asteroidCollision(vector<int>& asteroids) {
+          
+        stack<int>st;
+        
+        for(auto &a:asteroids){
+            
+            while(!st.empty() && a<0 && st.top()>0){//collision happen
+                 
+                int sum= a+st.top();
+
+                if(sum<0){//magnitude of a is greater so pop the top element
+                    st.pop();
+                }
+                else if(sum>0){//magnitude of top element of stack is greater
+                    a=0;
+                }
+                else if(sum==0){//both will destroyed due to same magnitude
+                    st.pop();
+                    a=0;
+                }
+            }
+
+            if(a!=0) st.push(a);
+        }
+
+        vector<int>res;
+        while(!st.empty()){
+            res.push_back(st.top());
+            st.pop();
+        }
+
+        reverse(res.begin(),res.end());
+
+        return res;
+    }
+};
