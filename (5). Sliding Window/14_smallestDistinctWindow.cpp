@@ -7,27 +7,32 @@ using namespace std;
 
 class Solution {
   public:
-    int findSubString(string& str) {
-        // code here
-        int n=str.size();
-        if(n==0) return 0;
-        int k=unordered_set<char>(str.begin(),str.end()).size();//total unique character
+    int findSubString(string& s) {
+    
+        unordered_set<char>st(s.begin(),s.end());//To find unique character
+        int n=s.length();
+        int i=0,j=0;
         
-        int i=0,j=0, mini=INT_MAX;
+        int mini=INT_MAX;
         unordered_map<char,int>mp;
-        
         while(j<n){
             
-            mp[str[j]]++;
+            mp[s[j]]++;
             
-            while(mp.size()==k){
+            while(mp.size()==st.size()){
                 
-                 mini=min(mini,j-i+1);
-                 mp[str[i]]--;
-                 
-                 if(mp[str[i]]==0) mp.erase(str[i]);
-                 
-                 i++; 
+                mini=min(mini,j-i+1);
+                
+                if(mp.count(s[i])){
+                    
+                    mp[s[i]]--;
+                    
+                    if(mp[s[i]]==0){
+                        mp.erase(s[i]);
+                    }
+                }
+                
+                i++;
             }
             
             j++;
