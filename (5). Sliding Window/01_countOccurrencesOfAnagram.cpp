@@ -85,53 +85,7 @@ class Solution {
       
 };
 
-//Method-03: Using hash array
 
-int search(string &pat, string &txt) {
-        
-        int m = pat.size();
-        int n = txt.size();
-    
-        if (m > n) return 0;
-    
-        // Fixed-size frequency array for O(1) direct lookup
-        vector<int> mp(256, 0);
-        int distinct_chars = 0;
-    
-        for (char ch : pat) {
-            if (mp[ch] == 0) distinct_chars++;
-            mp[ch]++;
-        }
-    
-        int cnt = 0;
-        int i = 0, j = 0;
-    
-        while (j < n) {
-            // Expand window (Right Pointer)
-            mp[txt[j]]--;
-            if (mp[txt[j]] == 0) {
-                distinct_chars--; // We satisfied the required count for this char
-            }
-    
-            // Window reaches size 'm'
-            if (j - i + 1 == m) {
-                if (distinct_chars == 0) {
-                    cnt++;
-                }
-    
-                // Shrink window (Left Pointer)
-                // If frequency becomes 1, it means we transitioned from matched (0) to unmatched (1)
-                if (mp[txt[i]] == 0) {
-                    distinct_chars++;
-                }
-                mp[txt[i]]++;
-                i++;
-            }
-            j++;
-        }
-    
-        return cnt;
-    }
 
 //Q.(2) find all anagrams of given string
     vector<int> findAnagrams(string txt, string pat) {
@@ -198,7 +152,7 @@ int search(string &pat, string &txt) {
         return false;
     }
 
-//(4).Print all anagrams together
+//(4).Group  anagrams together
     vector<vector<string>> anagrams(vector<string>& arr) {
         // code here
         vector<vector<string>>ans;
