@@ -18,18 +18,19 @@ class Solution {
   public:
     void deleteNode(Node* node) {
         
-        if (node == NULL || node->next == NULL) {
-            return; // can't delete last node
+        Node* prev=NULL;
+        
+        while(node!=NULL && node->next!=NULL){
+            
+            node->data=node->next->data;//Assign value of node to next node value
+            
+            prev=node;//assign node to prev;
+            
+            node=node->next;//move node to the next
         }
-    
-        Node* temp = node->next;
-    
-        node->data = temp->data;   // copy data
-        node->next = temp->next;   // skip next node
-    
-        delete temp;               // delete next node
+        
+        prev->next=NULL;//make last node as null because its value is duplicate
+        delete(node);//delete node
     }
 };
-//We can't delete last node Because we need next node to copy data, and last node has no next
-//Delete current = copy next node data in given node +skip next + delete next
 
