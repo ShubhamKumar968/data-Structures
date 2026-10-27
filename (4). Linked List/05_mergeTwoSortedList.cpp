@@ -55,27 +55,35 @@ class Solution {
         
         return dummy->next;
     }
+}
+};
 
     //Method-2 Using recursive approach
-    Node *merge2Sorted(Node *head1, Node *head2){
+   Node* solve(Node* a, Node* b,Node* &res){
         
-        if(head1==NULL) return head2;
-        if(head2==NULL) return head1;
+        if(!a) return b;
+        if(!b) return a;
         
-        struct Node * res;
-        
-        if(head1->data>head2->data){
-            res=head2;
-            res->next=merge2Sorted(head1,head2->next);
+        if(a->data > b->data){
+            res=b;
+            res->next=solve(a,b->next,res);
         }else{
-            res=head1;
-            res->next=merge2Sorted(head1->next,head2);
+            res=a;
+            res->next=solve(a->next,b,res);
         }
         
         return res;
     }
     
-};
+    Node* sortedMerge(Node* head1, Node* head2) {
+        
+        Node* res=NULL;
+        
+        solve(head1,head2,res);
+        
+        return res;
+        
+    }
 
 //Dummy node use hota hai jab:
 
