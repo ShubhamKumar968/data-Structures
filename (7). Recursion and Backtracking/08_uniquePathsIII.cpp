@@ -8,12 +8,13 @@ using namespace std;
 class Solution {
 public:
     
-    typedef pair<int,int>p;
-    vector<vector<int>>dir={{1,0},{0,1},{-1,0},{0,-1}};
+typedef pair<int,int>p;
+vector<vector<int>>dir={{1,0},{0,1},{-1,0},{0,-1}};
 
-    void solve(vector<vector<int>>& grid, int i, int j, p& dest,int NonObstacle,int m, int n,int & paths){
+void solve(vector<vector<int>>& grid, int i, int j, p& dest,int NonObstacle,int m, int n,int & paths){
         
         NonObstacle--;
+        
         if(i==dest.first && j==dest.second){
             if(NonObstacle==0){
                 paths++;
@@ -21,11 +22,7 @@ public:
 
             return;
         }
-        
-        if(i<0 || i>=m || j<0 || j>=n || grid[i][j]==-1){
-            return;
-        }
-
+    
         int temp=grid[i][j];
         grid[i][j]=-1;
 
@@ -33,13 +30,14 @@ public:
             int ni=i+d[0];
             int nj=j+d[1];
 
-            solve(grid,ni,nj,dest,NonObstacle,m,n,paths);
+            if(ni>=0 && ni<m && nj>=0 && nj<n &&grid[ni][nj]!=-1) solve(grid,ni,nj,dest,NonObstacle,m,n,paths);
         }
 
         grid[i][j]=temp;
 
         return;
-    }
+}
+
     int uniquePathsIII(vector<vector<int>>& grid) {
         
         int m=grid.size();
